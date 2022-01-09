@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://blog.septenary.cn/%E6%91%A9%E5%B0%94%E6%8A%95%E7%A5%A8/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/%E6%A4%AD%E5%9C%86%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95ECC/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/%E7%BB%84%E4%BB%B6%E5%8C%96SPI%E6%9C%BA%E5%88%B6/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/%E9%9D%A2%E8%AF%95%E4%BD%A0%E5%BA%94%E8%AF%A5%E4%BA%86%E8%A7%A3%E7%9A%84%E7%9F%A5%E8%AF%86%E7%82%B9/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/about/index.html</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/categories/index.html</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/tags/index.html</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/efficient-terminal/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/gradle-build-cache/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/uinput-event-injection/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/%E5%8C%85%E5%90%8D%E8%A7%84%E5%88%99/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/%E5%BB%BA%E7%AB%99%E8%AE%B0%E5%BD%95/</loc>
+    
+    <lastmod>2022-01-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+
+  <url>
+    <loc>http://blog.septenary.cn/</loc>
+    <lastmod>2022-01-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  
+  <url>
+    <loc>http://blog.septenary.cn/tags/uinput/</loc>
+    <lastmod>2022-01-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.septenary.cn/tags/linux/</loc>
+    <lastmod>2022-01-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+
+  
+  <url>
+    <loc>http://blog.septenary.cn/categories/Android/</loc>
+    <lastmod>2022-01-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+</urlset>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/favicon/favicon.ico" color="#222">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.septenary.cn","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="初识 Linux 中 uinput 模块">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UINPUT 事件注入">
+<meta property="og:url" content="http://blog.septenary.cn/uinput-event-injection/index.html">
+<meta property="og:site_name" content="Septenary&#39;s blog">
+<meta property="og:description" content="初识 Linux 中 uinput 模块">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-01-16T14:08:12.000Z">
+<meta property="article:modified_time" content="2022-01-09T16:51:51.126Z">
+<meta property="article:author" content="Septenary">
+<meta property="article:tag" content="uinput">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://blog.septenary.cn/uinput-event-injection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://blog.septenary.cn/uinput-event-injection/","path":"uinput-event-injection/","title":"UINPUT 事件注入"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UINPUT 事件注入 | Septenary's blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Septenary's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-schedule"><a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%AE%BE%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">创建设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E6%B3%A8%E5%85%A5"><span class="nav-number">3.</span> <span class="nav-text">事件注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%80%E6%AF%81%E8%AE%BE%E5%A4%87"><span class="nav-number">4.</span> <span class="nav-text">销毁设备</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Septenary"
+      src="https://septenary.cn/assets/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Septenary</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yourname@gmail.com" title="E-Mail → mailto:yourname@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://plus.google.com/yourname" title="Google → https:&#x2F;&#x2F;plus.google.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-google fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/yourname" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/yourname" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/yourname" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://youtube.com/yourname" title="YouTube → https:&#x2F;&#x2F;youtube.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-youtube fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/yourname" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="skype:yourname?call|chat" title="Skype → skype:yourname?call|chat" rel="noopener" target="_blank"><i class="fab fa-skype fa-fw"></i></a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://example1.com/" title="https:&#x2F;&#x2F;example1.com&#x2F;" rel="noopener" target="_blank">友情链接</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://example2.com/" title="https:&#x2F;&#x2F;example2.com&#x2F;" rel="noopener" target="_blank">Title2</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.septenary.cn/uinput-event-injection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://septenary.cn/assets/avatar.jpg">
+      <meta itemprop="name" content="Septenary">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Septenary's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UINPUT 事件注入
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-01-16 14:08:12" itemprop="dateCreated datePublished" datetime="2016-01-16T14:08:12+00:00">2016-01-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-09 16:51:51" itemprop="dateModified" datetime="2022-01-09T16:51:51+00:00">2022-01-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">初识 Linux 中 uinput 模块</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>uinput</strong> 是 <strong>Linux Kernel</strong> 的一个模块，是向用户层提供输入接口的子系统。我们可以通过 <strong>uinput</strong> 在 <em>/dev/input/</em> 中创建一个虚拟字符设备并注入事件。本文主要讲解如何使用 <strong>uinput</strong> 实现键盘事件的注入。</p>
+<h2 id="创建设备"><a href="#创建设备" class="headerlink" title="创建设备"></a>创建设备</h2><p>1.<strong>uinput</strong> 通常位于 <em>/dev/uinput</em> 或者 <em>/dev/input/uinput</em> ，终端执行 <code>adb shell ls -al /dev/uinput</code> ，可以看到 </p>
+<blockquote>
+<p>crw-rw—- system  system  10, 223 1970-01-01 08:00 uinput</p>
+</blockquote>
+<p>该文件为系统权限的字符设备，作为一个普通应用程序没有办法访问，所以在访问 <strong>uinput</strong> 之前，先要提权。终端执行 <code>adb shell su &amp;&amp; chmod 666 /dev/uinput</code> 更改字符设备的访问权限，再次执行 <code>adb shell ls -al /dev/uinput</code> 可以看到</p>
+<blockquote>
+<p>crw-rw-rw- system  system  10, 223 1970-01-01 08:00 uinput</p>
+</blockquote>
+<span id="more"></span>
+
+<p>2.提权后便可以使用 <strong>uinput</strong> 了，以 <strong>只读</strong> 和 <strong>非阻塞</strong> 模式打开它</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/input.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/uinput.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> fd = <span class="built_in">open</span>(<span class="string">&quot;/dev/uinput&quot;</span>, O_WRONLY | O_NONBLOCK);</span><br><span class="line"><span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    fd = <span class="built_in">open</span>(<span class="string">&quot;/dev/input/uinput&quot;</span>, O_WRONLY | O_NONBLOCK);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.打开后需要配置 <strong>uinput</strong> 哪些类型的输入事件会用到，这些事件定义在 <strong>linux/input.h</strong> 文件中</p>
+<table>
+<thead>
+<tr>
+<th align="left">宏</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">define EV_SYN 0x00</td>
+<td align="left">同步事件</td>
+</tr>
+<tr>
+<td align="left">define EV_KEY 0x01</td>
+<td align="left">键盘按下和释放事件</td>
+</tr>
+<tr>
+<td align="left">define EV_REL 0x02</td>
+<td align="left">相对坐标事件</td>
+</tr>
+<tr>
+<td align="left">define EV_ABS 0x03</td>
+<td align="left">绝对坐标事件</td>
+</tr>
+</tbody></table>
+<p>对于键盘事件，进行如下配置（允许发送 key 和 syn 两种类型的事件）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ret = <span class="built_in">ioctl</span>(fd, UI_SET_EVBIT, EV_KEY);</span><br><span class="line">ret = <span class="built_in">ioctl</span>(fd, UI_SET_EVBIT, EV_SYN);</span><br></pre></td></tr></table></figure>
+
+<p>配置哪些按键可以输入（上下左右方向键）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 允许输入方向键上、下、左、右</span></span><br><span class="line">ret = <span class="built_in">ioctl</span>(fd, UI_SET_KEYBIT, KEY_UP);</span><br><span class="line">ret = <span class="built_in">ioctl</span>(fd, UI_SET_KEYBIT, KEY_DOWN);</span><br><span class="line">ret = <span class="built_in">ioctl</span>(fd, UI_SET_KEYBIT, KEY_LEFT);</span><br><span class="line">ret = <span class="built_in">ioctl</span>(fd, UI_SET_KEYBIT, KEY_RIGHT);</span><br></pre></td></tr></table></figure>
+
+<p>4.上面已经配置了一些基本特性，接下来介绍结构体 <code>uinput_user_dev </code>，它定义在 <strong>linux/uinput.h</strong> 头文件中</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UINPUT_MAX_NAME_SIZE 80</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">uinput_user_dev</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> name[UINPUT_MAX_NAME_SIZE];</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">input_id</span> <span class="title">id</span>;</span></span><br><span class="line">        <span class="keyword">int</span> ff_effects_max;</span><br><span class="line">        <span class="keyword">int</span> absmax[ABS_MAX + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> absmin[ABS_MAX + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> absfuzz[ABS_MAX + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> absflat[ABS_MAX + <span class="number">1</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其中有几个比较重要的字段:</p>
+<ul>
+<li>name 要创建的虚拟设备名称</li>
+<li>id 内部结构体，描述设备的 usb 类型，厂商，产品，版本</li>
+<li>absmin and absmax 整型数组，描述鼠标或触屏事件的阈值</li>
+</ul>
+<p>将虚拟设备的信息写入 <code>fd</code> ，虚拟设备命名为 <strong>uinput-sample</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">uinput_user_dev</span> <span class="title">dev</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">memset</span>(&amp;dev, <span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(dev));</span><br><span class="line"><span class="built_in">snprintf</span>(dev.name, UINPUT_MAX_NAME_SIZE, <span class="string">&quot;uinput-sample&quot;</span>); <span class="comment">// 虚拟设备名称</span></span><br><span class="line">dev.id.bustype = BUS_USB; <span class="comment">// udb 类型</span></span><br><span class="line">dev.id.vendor = <span class="number">0x1</span>;</span><br><span class="line">dev.id.product = <span class="number">0x1</span>;</span><br><span class="line">dev.id.version = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">write</span>(fd, &amp;dev, <span class="built_in"><span class="keyword">sizeof</span></span>(dev)); <span class="comment">// 写入</span></span><br></pre></td></tr></table></figure>
+
+<p>5.最后，创建配置好的虚拟设备</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ret = <span class="built_in">ioctl</span>(fd, UI_DEV_CREATE)</span><br></pre></td></tr></table></figure>
+<p>终端执行 <code>adb shell getevent</code> 你会看到虚拟设备 <strong>uinput-sample</strong> 已经创建成功:  <strong>/dev/input/event1</strong></p>
+<blockquote>
+<p>add device 1: /dev/input/event1<br>  name:     “uinput-sample” </p>
+<p>add device 2: /dev/input/event6<br>  name:     “eventserver-Joystick”</p>
+<p>add device 3: /dev/input/event5<br>  name:     “eventserver-Mouse”</p>
+<p>add device 4: /dev/input/event0<br>  name:     “aml_keypad”</p>
+</blockquote>
+<hr>
+<h2 id="事件注入"><a href="#事件注入" class="headerlink" title="事件注入"></a>事件注入</h2><p>创建好了设备，开始注入事件，这里还需介绍一个结构体 <code>input_event</code> ，它定义在 <strong>linux/input.h</strong> 中，其中几个重要的字段：</p>
+<ul>
+<li><code>type</code>:  event 的类型 (EV_KEY, EV_ABS, EV_REL, …),</li>
+<li><code>code</code>:  如果 type 是 EV_KEY 类型，则是 key code；若type是 EV_ABS 或者 EV_REL 类型，则是 x、y轴</li>
+<li><code>value</code>:   如果 type 是 EV_KEY 类型，则 1 (press) 0 (release)；若type是 EV_ABS 或者 EV_REL 类型，则为 x，y 坐标</li>
+</ul>
+<p>声明写入事件的方法</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">writeEvent</span><span class="params">(<span class="keyword">int</span> fd,<span class="keyword">int</span> type,<span class="keyword">int</span> code,<span class="keyword">int</span> value)</span></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">input_event</span> <span class="title">ev</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;ev, <span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(ev));</span><br><span class="line">    ev.type = type;</span><br><span class="line">    ev.code = code;</span><br><span class="line">    ev.value = value;</span><br><span class="line">    <span class="keyword">ssize_t</span> bytes;<span class="comment">// 写入文档的字节数（成功）；-1（出错）</span></span><br><span class="line">    bytes = <span class="built_in">write</span>(fd, &amp;ev, <span class="built_in"><span class="keyword">sizeof</span></span>(struct input_event));</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">int</span>) bytes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写入一个键盘方向键事件  <strong>KEY_UP</strong> </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">writeEvent</span>(fd,EV_KEY,KEY_UP,<span class="number">1</span>) <span class="comment">// KEY_UP press</span></span><br><span class="line"><span class="built_in">writeEvent</span>(fd,EV_KEY,KEY_UP,<span class="number">0</span>) <span class="comment">// KEY_UP release</span></span><br></pre></td></tr></table></figure>
+
+<p>将写入的事件同步到虚拟设备</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">writeEvent</span>(fd,EV_SYN,SYN_REPORT,<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="销毁设备"><a href="#销毁设备" class="headerlink" title="销毁设备"></a>销毁设备</h2><p>注入了事件之后需要销毁虚拟设备，调用下面的函数，再次执行 <code>adb shell getevent</code> 你会看到设备已被移除</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">destroy</span><span class="params">(<span class="keyword">int</span> fd)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (fd != <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> ret = <span class="built_in">ioctl</span>(fd, UI_DEV_DESTROY);</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现 uinput 事件注入步骤就是：<strong>创建虚拟设备-&gt;注入事件-&gt;销毁设备</strong>，上文只是介绍了键盘事件的注入，其实也可以注入鼠标事件，触摸事件等，接下来的文章会介绍到，请大家多多关注。</p>
+<p><strong>参考：</strong><br><a target="_blank" rel="noopener" href="https://source.android.com/devices/input/input-device-configuration-files.html">https://source.android.com/devices/input/input-device-configuration-files.html</a><br><a target="_blank" rel="noopener" href="http://thiemonge.org/getting-started-with-uinput">http://thiemonge.org/getting-started-with-uinput</a><br><a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/input/multi-touch-protocol.txt">https://www.kernel.org/doc/Documentation/input/multi-touch-protocol.txt</a><br><a target="_blank" rel="noopener" href="http://bitmath.org/code/mtdev/">http://bitmath.org/code/mtdev/</a><br><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/4386449/send-touch-event-from-adb-to-a-device">http://stackoverflow.com/questions/4386449/send-touch-event-from-adb-to-a-device</a><br><a target="_blank" rel="noopener" href="http://blog.csdn.net/droidphone/article/details/8434768">http://blog.csdn.net/droidphone/article/details/8434768</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Septenary
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://blog.septenary.cn/uinput-event-injection/" title="UINPUT 事件注入">http://blog.septenary.cn/uinput-event-injection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/uinput/" rel="tag"># uinput</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/" rel="next" title="代码规范">
+                  代码规范 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Septenary</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
