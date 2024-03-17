@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/favicon-32x32.png">
+  <link rel="icon" href="/favicon/favicon-32x32.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#13323c">
+  <meta name="author" content="Sep">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="神奇的事情发生了，写点注释就能自动生成代码，这是怎么做到的呢？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AndroidStudio 编译时自动生成源代码">
+<meta property="og:url" content="https://blog.septenary.cn/android-apt-auto-gen-code/index.html">
+<meta property="og:site_name" content="Sep&#39;s blog">
+<meta property="og:description" content="神奇的事情发生了，写点注释就能自动生成代码，这是怎么做到的呢？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.septenary.cn/assets/android-apt-auto-gen-code/post-1512109-1.png">
+<meta property="og:image" content="https://blog.septenary.cn/assets/android-apt-auto-gen-code/post-1512109-2.png">
+<meta property="article:published_time" content="2015-12-19T12:00:00.000Z">
+<meta property="article:modified_time" content="2024-03-17T07:47:39.043Z">
+<meta property="article:author" content="Sep">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.septenary.cn/assets/android-apt-auto-gen-code/post-1512109-1.png">
+  
+  
+  
+  <title>AndroidStudio 编译时自动生成源代码 ✍️ Sep&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.septenary.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":10,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#00bfa6","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"shell"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"ba4b70fc46a41b92c211dabf83df845c","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"KY2xelIyRT9MVrxAcB4hScJS-MdYXbMMI","app_key":"Tys2qvQf5WYXnV1GiOWsOBis","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ba4b70fc46a41b92c211dabf83df845c";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><script src="/scripts/hexo_resize_image.js"></script><!-- hexo injector body_begin end -->
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>📚 Sep&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn/assets/resume_en_2024.pdf" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Sep</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="AndroidStudio 编译时自动生成源代码"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2015-12-19 12:00" pubdate>
+          2015年12月19日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">AndroidStudio 编译时自动生成源代码</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Annotation"><a href="#Annotation" class="headerlink" title="Annotation"></a>Annotation</h1><ul>
+<li><code>@Retention(RetentionPolicy.SOURCE)</code></li>
+<li><code>@Retention(RetentionPolicy.RUNTIME)</code></li>
+<li><code>@Retention(RetentionPolicy.CLASS)</code></li>
+</ul>
+<p><a target="_blank" rel="noopener" href="http://docs.oracle.com/javase/tutorial/java/annotations/index.html">Annotation Document</a></p>
+<h1 id="APT—annotation-processing-tool"><a href="#APT—annotation-processing-tool" class="headerlink" title="APT—annotation processing tool"></a>APT—annotation processing tool</h1><p><strong>apt</strong>（Annotation processing  tool） 是在编译时，扫描和处理注解的一个构建工具，<strong>Java 5</strong> 时就已经有了，直到 <strong>Java 6</strong> 才提供 API 给开发者，<strong>apt</strong> 的道路实在坎坷，到了 <strong>Java 7</strong> 又被废弃。现在，该功能由 <strong>javac</strong> 来实现，我们可以在 <strong>javac</strong> 编译时源代码额外生成 java 源代码（也可以是其它类型的文件），那么如何处理注解，需要我们了解 <code>AbstractProcessor</code> 这个类。</p>
+<h1 id="AbstractProcessor"><a href="#AbstractProcessor" class="headerlink" title="AbstractProcessor"></a>AbstractProcessor</h1><p><strong>AbstractProcessor</strong> 是 <strong>javac</strong>  扫描和处理注解的关键类，在所有的 <code>Processor</code>API 中都可以看到它们都继承自 <code>AbstractProcessor</code> ，像下面的代码示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> cn.septenary.processor;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyProcessor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AbstractProcessor</span> </span>&#123;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title">init</span><span class="hljs-params">(ProcessingEnvironment env)</span></span>&#123; &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">process</span><span class="hljs-params">(Set&lt;? extends TypeElement&gt; annoations, RoundEnvironment env)</span> </span>&#123; &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> Set&lt;String&gt; <span class="hljs-title">getSupportedAnnotationTypes</span><span class="hljs-params">()</span> </span>&#123; &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> SourceVersion <span class="hljs-title">getSupportedSourceVersion</span><span class="hljs-params">()</span> </span>&#123; &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<ul>
+<li><code>init(ProcessingEnvironment env)</code> ：<strong>javac</strong> 会在 <strong>Processor</strong> 创建时调用并执行的初始化操作，该方法会传入 一个参数 <code>ProcessingEnvironment env</code> ，通过 env 可以访问 <code>Elements</code>、<code>Types</code>、<code>Filer</code>等工具类。</li>
+<li><code>process(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment env)</code> ：它是每个 <strong>processor</strong> 的主方法，可以在这个方法中扫描和处理注解，并生成新的 java 源代码，通过参数 <code>RoundEnvironment env</code> 可以找到我们想要的某一个被注解的元素</li>
+<li><code>getSupportedAnnotationTypes()</code> 指定哪些注解需要注册</li>
+<li><code>getSupportedSourceVersion()</code> 指定支持的 java 版本，通常返回 <code>SourceVersion.latestSupported()</code>，如果只想支持到 <strong>Java 6</strong> 可以返回 <code>SourceVersion.RELEASE_6</code></li>
+</ul>
+<p>在 <strong>Java 7</strong> 中可以不用重写 <code>getSupportedAnnotationTypes（）</code> 和 <code>getSupportedSourceVersion()</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@SupportedSourceVersion(SourceVersion.latestSupported())</span><br><span class="hljs-meta">@SupportedAnnotationTypes(&#123;</span><br><span class="hljs-meta">   // Set of full qullified annotation type names</span><br><span class="hljs-meta"> &#125;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyProcessor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AbstractProcessor</span> </span>&#123;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title">init</span><span class="hljs-params">(ProcessingEnvironment env)</span></span>&#123; &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">process</span><span class="hljs-params">(Set&lt;? extends TypeElement&gt; annoations, RoundEnvironment env)</span> </span>&#123; &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="Register-Your-Processor"><a href="#Register-Your-Processor" class="headerlink" title="Register Your Processor"></a>Register Your Processor</h1><p>如何让 <strong>javac</strong> 执行时调用我自定义的 <strong>MyProcessor</strong> 呢，需要注册自定义的 <strong>MyProcessor</strong> 来完成</p>
+<p>1.<strong>MyProcessor</strong> 需要打包到 <strong>jar</strong> 包中，就像其它普通的 <strong>.jar</strong> 文件一样，这里命名为 <strong>MyProcessor.jar</strong><br>2.但 <strong>MyProcessor.jar</strong> 中多了一个特殊的文件：<strong>javax.annotation.processing.Processor</strong> 它存储在 <strong>jar/META-INF/services/</strong> 文件夹下，<strong>MyProcessor.jar</strong> 的结构是这样的：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs xml">MyProcessor.jar<br>    - cn<br>        - septenary<br>            - processor<br>                - MyProcessor.class<br>    - META-INF<br>        - services<br>            - javax.annotation.processing.Processor<br></code></pre></td></tr></table></figure>
+
+<p><strong>javax.annotation.processing.Processor</strong> 文件列出了要注册的 <strong>Processor</strong>，每个 <strong>Processor</strong> 逐行列出</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs xml">cn.septenary.processor.MyProcessor<br>com.foo.OtherProcessor<br>net.foo.SpecialProcessor<br></code></pre></td></tr></table></figure>
+
+<p>构建项目时 <strong>javac</strong> 自动检测并读取 <strong>javax.annotation.processing.Processor</strong> 来注册列出来的 <strong>Processor</strong></p>
+<h1 id="Android-Studio-中实现编译时动态生成代码"><a href="#Android-Studio-中实现编译时动态生成代码" class="headerlink" title="Android Studio 中实现编译时动态生成代码"></a>Android Studio 中实现编译时动态生成代码</h1><h2 id="1-新建工程，分别创建三个模板"><a href="#1-新建工程，分别创建三个模板" class="headerlink" title="1.新建工程，分别创建三个模板"></a>1.新建工程，分别创建三个模板</h2><ul>
+<li>app module (Android module)</li>
+<li>api module (Java module)</li>
+<li>compiler module (Java module)</li>
+</ul>
+<h2 id="2-根目录-build-gradle"><a href="#2-根目录-build-gradle" class="headerlink" title="2.根目录 build.gradle"></a>2.根目录 build.gradle</h2><p>需要声明依赖插件 <strong>android-apt</strong>，它是将 Android Studio 与 annotation processors 结合的一个插件，构建工程时，它会辅助 javac 执行 processor，  <a target="_blank" rel="noopener" href="https://bitbucket.org/hvisser/android-apt#header-language">More</a> </p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs gradle"><span class="hljs-keyword">buildscript</span> &#123;<br>    ...<br>    <span class="hljs-keyword">dependencies</span> &#123;<br>        ...<br>        <span class="hljs-keyword">classpath</span> <span class="hljs-string">&#x27;com.neenbedankt.gradle.plugins:android-apt:1.8&#x27;</span><br>    &#125;<br>&#125;<br>...<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-app-module"><a href="#3-app-module" class="headerlink" title="3.app module"></a>3.app module</h2><p>Android 模板，使用 <strong>android-apt</strong>插件，依赖 <strong>api module</strong> 和 <strong>compiler module</strong></p>
+<p>1.使用自定义注解 <code>@MyAnnotation</code> 的类 <code>Bean</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@MyAnnotation</span><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Bean</span> </span>&#123;<br>    <span class="hljs-keyword">public</span> String name;<br>    <span class="hljs-keyword">public</span> String address;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Bean</span><span class="hljs-params">(String name, String address)</span> </span>&#123;<br>        <span class="hljs-keyword">this</span>.name = name;<br>        <span class="hljs-keyword">this</span>.address = address;<br>    &#125;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-keyword">return</span> StringUtil.createString(<span class="hljs-keyword">this</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>app module</strong> 中并没有 <code>StringUtil</code> 这个类，不考虑其他 module ，编写 <code>Bean</code> 中代码时，IDE 会警告找不到 <code>StringUtil</code>这个类，它是在编译时由 <strong>javac</strong> 和 <strong>compiler.jar</strong> 自动生成，继续往下看</p>
+<p> 2.build.gradle :<br> 3.</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs gradle">apply plugin: <span class="hljs-string">&#x27;com.neenbedankt.android-apt&#x27;</span><br>...<br>...<br><span class="hljs-keyword">dependencies</span> &#123;<br>    ...<br>    apt <span class="hljs-keyword">project</span>(<span class="hljs-string">&#x27;:compiler&#x27;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-lib-module"><a href="#4-lib-module" class="headerlink" title="4.lib module"></a>4.lib module</h2><p>普通的 java 模板，自定义注解 <code>MyAnnotation</code></p>
+<p><strong>build.gradle :</strong></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gradle">apply plugin: <span class="hljs-string">&#x27;java&#x27;</span><br>...<br></code></pre></td></tr></table></figure>
+
+<p><strong>MyAnnotation:</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Retention(RetentionPolicy.CLASS)</span><br><span class="hljs-meta">@Target(ElementType.TYPE)</span><br><span class="hljs-keyword">public</span> <span class="hljs-meta">@interface</span> MyAnnotation &#123;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-compiler-module"><a href="#5-compiler-module" class="headerlink" title="5.compiler module"></a>5.compiler module</h2><p>普通的 java 模板</p>
+<p>1.自定义注解处理器: <code>MyProcessor</code><br>2.引入了三个依赖：</p>
+<ul>
+<li><strong>lib</strong> ，使用自定义的注解 <code>MyAnnotation</code>，</li>
+<li><strong>auto-service</strong>， 用来自动生成 <strong>javax.annotation.processing.Processor</strong> 文件， <a target="_blank" rel="noopener" href="https://github.com/google/auto/tree/master/service">More</a></li>
+<li><strong>javapoet</strong> ，自动生成代码的工具类库， <a target="_blank" rel="noopener" href="https://github.com/square/javapoet">More</a></li>
+</ul>
+<p><strong>MyProcessor:</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 注解 @AutoService 自动生成 javax.annotation.processing.Processor 文件</span><br><span class="hljs-meta">@AutoService(Processor.class)</span><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyProcessor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AbstractProcessor</span> </span>&#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String ANNOTATION = <span class="hljs-string">&quot;@&quot;</span> + MyAnnotation.class.getSimpleName();<br>    <span class="hljs-keyword">private</span> Messager messager;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title">init</span><span class="hljs-params">(ProcessingEnvironment processingEnv)</span> </span>&#123;<br>        <span class="hljs-keyword">super</span>.init(processingEnv);<br>        messager = processingEnv.getMessager();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> Set&lt;String&gt; <span class="hljs-title">getSupportedAnnotationTypes</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-keyword">return</span> Collections.singleton(MyAnnotation.class.getCanonicalName());<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> SourceVersion <span class="hljs-title">getSupportedSourceVersion</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-keyword">return</span> SourceVersion.latestSupported();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">process</span><span class="hljs-params">(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv)</span> </span>&#123;<br>        List&lt;AnnotatedClass&gt; annotatedClasses = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();<br>        <span class="hljs-keyword">for</span> (Element annotatedElement : roundEnv.getElementsAnnotatedWith(MyAnnotation.class)) &#123;<br>            <span class="hljs-keyword">if</span> (annotatedElement <span class="hljs-keyword">instanceof</span> TypeElement) &#123;<br>                <span class="hljs-comment">// Our annotation is defined with @Target(value=TYPE)</span><br>                TypeElement element = (TypeElement) annotatedElement;<br>                <span class="hljs-keyword">if</span> (!isValidClass(element)) &#123;<br>                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;<br>                &#125;<br>                <span class="hljs-keyword">try</span> &#123;<br>                    AnnotatedClass annotatedClass = buildAnnotatedClass(element);<br>                    annotatedClasses.add(annotatedClass);<br>                &#125; <span class="hljs-keyword">catch</span> (NoPackageNameException | IOException e) &#123;<br>                    String message = String.format(<span class="hljs-string">&quot;Couldn&#x27;t process class %s: %s&quot;</span>, element, e.getMessage());<br>                    messager.printMessage(ERROR, message, annotatedElement);<br>                &#125;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">try</span> &#123;<br>            generate(annotatedClasses);<br>            <span class="hljs-comment">// genHelloWorld();</span><br>        &#125; <span class="hljs-keyword">catch</span> (NoPackageNameException | IOException e) &#123;<br>            messager.printMessage(ERROR, <span class="hljs-string">&quot;Couldn&#x27;t generate class&quot;</span>);<br>        &#125;<br>        Messager messager = processingEnv.getMessager();<br>        <span class="hljs-keyword">for</span> (TypeElement te : annotations) &#123;<br>            <span class="hljs-keyword">for</span> (Element e : roundEnv.getElementsAnnotatedWith(te)) &#123;<br>                messager.printMessage(Diagnostic.Kind.NOTE, <span class="hljs-string">&quot;HelloProcessor Printing: &quot;</span> + e.toString());<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// 构建被 @MyAnnotation 注解的类</span><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> AnnotatedClass <span class="hljs-title">buildAnnotatedClass</span><span class="hljs-params">(TypeElement typeElement)</span> <span class="hljs-keyword">throws</span> NoPackageNameException, IOException </span>&#123;<br>        ArrayList&lt;String&gt; variableNames = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();<br>        <span class="hljs-keyword">for</span> (Element element : typeElement.getEnclosedElements()) &#123;<br>            <span class="hljs-keyword">if</span> (!(element <span class="hljs-keyword">instanceof</span> VariableElement)) &#123;<br>                <span class="hljs-keyword">continue</span>;<br>            &#125;<br>            VariableElement variableElement = (VariableElement) element;<br>            variableNames.add(variableElement.getSimpleName().toString());<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> AnnotatedClass(typeElement, variableNames);<br>    &#125;<br><br>    <span class="hljs-comment">// 生成 StringUtil 源代码</span><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">generate</span><span class="hljs-params">(List&lt;AnnotatedClass&gt; list)</span> <span class="hljs-keyword">throws</span> NoPackageNameException, IOException </span>&#123;<br>        <span class="hljs-keyword">if</span> (list.size() == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-keyword">for</span> (AnnotatedClass annotatedClass : list) &#123;<br>            <span class="hljs-comment">// debug</span><br>            String message = annotatedClass.annotatedClassName + <span class="hljs-string">&quot; / &quot;</span> + annotatedClass.typeElement + <span class="hljs-string">&quot; / &quot;</span> + Arrays.toString(annotatedClass.variableNames.toArray());<br>            messager.printMessage(Diagnostic.Kind.NOTE, message, annotatedClass.typeElement);<br>        &#125;<br><br>        <span class="hljs-comment">// 生成源代码</span><br>        String packageName = getPackageName(processingEnv.getElementUtils(), list.get(<span class="hljs-number">0</span>).typeElement);<br>        TypeSpec generatedClass = CodeGenerator.generateClass(list);<br>        JavaFile javaFile = JavaFile.builder(packageName, generatedClass).build();<br><br>        <span class="hljs-comment">// 在 app module/build/generated/source/apt 生成一份源代码</span><br>        javaFile.writeTo(processingEnv.getFiler());<br><br>        <span class="hljs-comment">// 测试在桌面生成一份源代码</span><br>        javaFile.writeTo(<span class="hljs-keyword">new</span> File(System.getProperty(<span class="hljs-string">&quot;user.home&quot;</span>) + <span class="hljs-string">&quot;/Desktop/&quot;</span>));<br>    &#125;<br><br>    <span class="hljs-comment">// 在桌面生成 HelloWorld.java</span><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">genHelloWorld</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;<br>        MethodSpec main = MethodSpec.methodBuilder(<span class="hljs-string">&quot;main&quot;</span>).addModifiers(Modifier.PUBLIC, Modifier.STATIC).returns(<span class="hljs-keyword">void</span>.class).addParameter(String[].class, <span class="hljs-string">&quot;args&quot;</span>).addStatement(<span class="hljs-string">&quot;$T.out.println($S)&quot;</span>, System.class, <span class="hljs-string">&quot;Hello, JavaPoet!&quot;</span>).build();<br>        TypeSpec helloWorld = TypeSpec.classBuilder(<span class="hljs-string">&quot;HelloWorld&quot;</span>).addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(main).build();<br>        JavaFile javaFile = JavaFile.builder(<span class="hljs-string">&quot;cn.septenary.annotation&quot;</span>, helloWorld).build();<br>        javaFile.writeTo(<span class="hljs-keyword">new</span> File(System.getProperty(<span class="hljs-string">&quot;user.home&quot;</span>) + <span class="hljs-string">&quot;/Desktop/Hello&quot;</span>));<br>    &#125;<br><br>    <span class="hljs-comment">// 被 @MyAnnotation 注解的类</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AnnotatedClass</span> </span>&#123;<br>        <span class="hljs-comment">// 整个类元素</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> TypeElement typeElement;<br>        <span class="hljs-comment">// 类名</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> String annotatedClassName;<br>        <span class="hljs-comment">// 成员变量</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> List&lt;String&gt; variableNames;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">AnnotatedClass</span><span class="hljs-params">(TypeElement typeElement, List&lt;String&gt; variableNames)</span> </span>&#123;<br>            <span class="hljs-keyword">this</span>.annotatedClassName = typeElement.getSimpleName().toString();<br>            <span class="hljs-keyword">this</span>.variableNames = variableNames;<br>            <span class="hljs-keyword">this</span>.typeElement = typeElement;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> TypeMirror <span class="hljs-title">getType</span><span class="hljs-params">()</span> </span>&#123;<br>            <span class="hljs-keyword">return</span> typeElement.asType();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">// 源码生成器</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CodeGenerator</span> </span>&#123;<br><br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String CLASS_NAME = <span class="hljs-string">&quot;StringUtil&quot;</span>;<br><br>        <span class="hljs-comment">// 构建类</span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> TypeSpec <span class="hljs-title">generateClass</span><span class="hljs-params">(List&lt;AnnotatedClass&gt; classes)</span> </span>&#123;<br>            TypeSpec.Builder builder = classBuilder(CLASS_NAME).addModifiers(PUBLIC, FINAL);<br>            <span class="hljs-keyword">for</span> (AnnotatedClass anno : classes) &#123;<br>                builder.addMethod(makeCreateStringMethod(anno));<br>            &#125;<br>            <span class="hljs-keyword">return</span> builder.build();<br>        &#125;<br><br>        <span class="hljs-comment">// 将 AnnotatedClass 作为参数构建 createString() 方法</span><br>        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> MethodSpec <span class="hljs-title">makeCreateStringMethod</span><span class="hljs-params">(AnnotatedClass annotatedClass)</span> </span>&#123;<br>            StringBuilder builder = <span class="hljs-keyword">new</span> StringBuilder();<br>            builder.append(String.format(<span class="hljs-string">&quot;return \&quot;%s&#123;\&quot; + &quot;</span>, annotatedClass.annotatedClassName));<br>            <span class="hljs-keyword">for</span> (String variableName : annotatedClass.variableNames) &#123;<br>                builder.append(String.format(<span class="hljs-string">&quot; \&quot;%s=&#x27;\&quot; + String.valueOf(instance.%s) + \&quot;&#x27;,\&quot; + &quot;</span>, variableName, variableName));<br>            &#125;<br>            builder.append(<span class="hljs-string">&quot;\&quot;&#125;\&quot;&quot;</span>);<br>            <span class="hljs-keyword">return</span> methodBuilder(<span class="hljs-string">&quot;createString&quot;</span>).addJavadoc(<span class="hljs-string">&quot;@return string suitable for &#123;@param instance&#125;&#x27;s toString()&quot;</span>).addModifiers(PUBLIC, STATIC).addParameter(TypeName.get(annotatedClass.getType()), <span class="hljs-string">&quot;instance&quot;</span>).addStatement(builder.toString()).returns(String.class).build();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isPublic</span><span class="hljs-params">(TypeElement element)</span> </span>&#123;<br>        <span class="hljs-keyword">return</span> element.getModifiers().contains(PUBLIC);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isAbstract</span><span class="hljs-params">(TypeElement element)</span> </span>&#123;<br>        <span class="hljs-keyword">return</span> element.getModifiers().contains(ABSTRACT);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isValidClass</span><span class="hljs-params">(TypeElement element)</span> </span>&#123;<br><br>        <span class="hljs-keyword">if</span> (!isPublic(element)) &#123;<br>            String message = String.format(<span class="hljs-string">&quot;Classes annotated with %s must be public.&quot;</span>, ANNOTATION);<br>            messager.printMessage(Diagnostic.Kind.ERROR, message, element);<br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (isAbstract(element)) &#123;<br>            String message = String.format(<span class="hljs-string">&quot;Classes annotated with %s must not be abstract.&quot;</span>, ANNOTATION);<br>            messager.printMessage(Diagnostic.Kind.ERROR, message, element);<br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">getPackageName</span><span class="hljs-params">(Elements elements, TypeElement typeElement)</span> <span class="hljs-keyword">throws</span> NoPackageNameException </span>&#123;<br>        PackageElement pkg = elements.getPackageOf(typeElement);<br>        <span class="hljs-keyword">if</span> (pkg.isUnnamed()) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> NoPackageNameException(typeElement);<br>        &#125;<br>        <span class="hljs-keyword">return</span> pkg.getQualifiedName().toString();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>build.gradle:</strong></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs gradle">apply plugin: <span class="hljs-string">&#x27;java&#x27;</span><br>...<br><span class="hljs-keyword">dependencies</span> &#123;<br>    <span class="hljs-keyword">compile</span> <span class="hljs-keyword">project</span>(<span class="hljs-string">&#x27;:lib&#x27;</span>)<br>    <span class="hljs-keyword">compile</span> <span class="hljs-string">&#x27;com.google.auto.service:auto-service:1.0-rc2&#x27;</span><br>    <span class="hljs-keyword">compile</span> <span class="hljs-string">&#x27;com.squareup:javapoet:1.4.0&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="6-构建-api-module"><a href="#6-构建-api-module" class="headerlink" title="6.构建 api module"></a>6.构建 api module</h2><p>生成 <strong>api.jar</strong> ,供 **lib module ** 和 <strong>app module</strong> 使用</p>
+<h2 id="7-构建-lib-module"><a href="#7-构建-lib-module" class="headerlink" title="7.构建 lib module"></a>7.构建 lib module</h2><p>生成了 <strong>complier.jar</strong> ，其中关键文件 <strong>javax.annotation.processing.Processor</strong> 也被自动添加到 jar 包中</p>
+<p><img src="/assets/android-apt-auto-gen-code/post-1512109-1.png" srcset="/img/loading.gif" lazyload alt="complier.jar"> </p>
+<h2 id="8-构建-app-module"><a href="#8-构建-app-module" class="headerlink" title="8.构建 app module"></a>8.构建 app module</h2><p>构建后会看到，IDE 不在警告 <code>TextUtil</code> 找不到的错误了，他的文件被自动生成在:</p>
+<p><img src="/assets/android-apt-auto-gen-code/post-1512109-2.png" srcset="/img/loading.gif" lazyload alt="TextUtil"> </p>
+<h2 id="9-案例源码"><a href="#9-案例源码" class="headerlink" title="9.案例源码"></a>9.案例源码</h2><p><a target="_blank" rel="noopener" href="https://github.com/oksep/Android-Gradle-Multy-Flavor">Github Source Code</a></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="http://brianattwell.com/android-annotation-processing-pojo-string-generator/">Android Annotation Processing: POJO string generator</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://deors.wordpress.com/2011/10/08/annotation-processors/">Code Generation using Annotation Processors</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://hannesdorfmann.com/annotation-processing/annotationprocessing101/">Annotation Processing</a></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Android/" class="category-chain-item">Android</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/insight-android-pm-pi/" title="深入理解 Android Package Manager 与 Package Installer">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">深入理解 Android Package Manager 与 Package Installer</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/android-tv-dimention-adaption/" title="Android 盒子适配解决办法汇总">
+                        <span class="hidden-mobile">Android 盒子适配解决办法汇总</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://cdn.staticfile.org/waline/2.15.5/waline.min.css')
+      Fluid.utils.createScript('https://cdn.staticfile.org/waline/2.15.5/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://vercel-blog-comment-sandy.vercel.app","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/scripts/sakura_less.js"></script><!-- hexo injector body_end end --></body>
+</html>

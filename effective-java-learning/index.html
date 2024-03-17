@@ -1,0 +1,1019 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/favicon-32x32.png">
+  <link rel="icon" href="/favicon/favicon-32x32.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#13323c">
+  <meta name="author" content="Sep">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="少年, Java 葵花宝典了解一下~">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Effective Java》读书笔记">
+<meta property="og:url" content="https://blog.septenary.cn/effective-java-learning/index.html">
+<meta property="og:site_name" content="Sep&#39;s blog">
+<meta property="og:description" content="少年, Java 葵花宝典了解一下~">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-05-01T12:00:00.000Z">
+<meta property="article:modified_time" content="2024-03-17T07:47:39.047Z">
+<meta property="article:author" content="Sep">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>《Effective Java》读书笔记 ✍️ Sep&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.septenary.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":10,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#00bfa6","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"shell"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"ba4b70fc46a41b92c211dabf83df845c","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"KY2xelIyRT9MVrxAcB4hScJS-MdYXbMMI","app_key":"Tys2qvQf5WYXnV1GiOWsOBis","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ba4b70fc46a41b92c211dabf83df845c";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><script src="/scripts/hexo_resize_image.js"></script><!-- hexo injector body_begin end -->
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>📚 Sep&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn/assets/resume_en_2024.pdf" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Sep</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="《Effective Java》读书笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2016-05-01 12:00" pubdate>
+          2016年5月1日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          82 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">《Effective Java》读书笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-考虑用静态工厂方法代替构造器"><a href="#1-考虑用静态工厂方法代替构造器" class="headerlink" title="1.考虑用静态工厂方法代替构造器"></a>1.考虑用静态工厂方法代替构造器</h2><p>当一个类需要多个带有相同签名的构造器时，就用静态工厂方法代替多个构造器，并且慎重的选择名称以便突出他们之前的区别。</p>
+<p>静态工厂相对构造器的三大优势：</p>
+<ol>
+<li>静态工厂方法都有名称</li>
+<li>不必在每次调用都创建一个新的对象（对象的复用）</li>
+<li>可以返回类型的任意子类型对象 （多态性）</li>
+</ol>
+<span id="more"></span>
+
+<p>静态工厂惯用名称：</p>
+<ol>
+<li>valueOf</li>
+<li>of (valueOf 更简洁用法)</li>
+<li>getInstance</li>
+<li>newInstance</li>
+<li>getType</li>
+<li>newType</li>
+</ol>
+<h2 id="2-遇到多个构造器参数时考虑使用构建模式"><a href="#2-遇到多个构造器参数时考虑使用构建模式" class="headerlink" title="2.遇到多个构造器参数时考虑使用构建模式"></a>2.遇到多个构造器参数时考虑使用构建模式</h2><p>构造器模式。详见构造器博客。</p>
+<h2 id="3-用私有构造器或者枚举类型强化Singleton属性"><a href="#3-用私有构造器或者枚举类型强化Singleton属性" class="headerlink" title="3.用私有构造器或者枚举类型强化Singleton属性"></a>3.用私有构造器或者枚举类型强化Singleton属性</h2><p>单例模式的使用。 最基本就是用私有构造器来保证实例不会被构造。 除此之外，枚举是一种很优雅的单例模式实现方法。</p>
+<p>单例模式三种实现方式：</p>
+<ol>
+<li>公有域</li>
+<li>公有静态方法 （推荐）</li>
+<li>包含单个元素的枚举类型 （强烈推荐）</li>
+</ol>
+<h2 id="4-通过私有构造器强化不可实例化的能力"><a href="#4-通过私有构造器强化不可实例化的能力" class="headerlink" title="4.通过私有构造器强化不可实例化的能力"></a>4.通过私有构造器强化不可实例化的能力</h2><p>同上。主要还阐明了对于一些不希望实例化的类，例如静态工具类也应该将构造方法申明为静态的强化其不可实例化的能力。</p>
+<h2 id="5-避免创建不必要的对象"><a href="#5-避免创建不必要的对象" class="headerlink" title="5.避免创建不必要的对象"></a>5.避免创建不必要的对象</h2><p>常见的如String池</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">String a = <span class="hljs-string">&quot;hello&quot;</span>;<br>String b = <span class="hljs-string">&quot;hello&quot;</span>;<br>String c = <span class="hljs-keyword">new</span> String(<span class="hljs-string">&quot;hello&quot;</span>);<br>a == b <span class="hljs-comment">//true</span><br>a == c <span class="hljs-comment">//false</span><br></code></pre></td></tr></table></figure>
+
+<p>ab共用连接池对象，c为不必要创建出来的对象。</p>
+<p>使用静态工厂也可以避免产生不必要的对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">Boolean a = <span class="hljs-keyword">new</span> Boolean(<span class="hljs-string">&quot;true&quot;</span>); <span class="hljs-comment">//产生对象</span><br>Boolean a = Boolean.valueOf(<span class="hljs-string">&quot;true&quot;</span>); <span class="hljs-comment">//不产生</span><br></code></pre></td></tr></table></figure>
+
+<p>当心自动装箱以及拆箱：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java">Long sum = <span class="hljs-number">0L</span>;<br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">long</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10000</span>; i++)&#123;<br>    sum += i;  <span class="hljs-comment">//自动装箱 形成一个Long对象</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上面的例子就不必要的产生了10000个Long对象。因为long会自动装箱成Long。改进方法为让sum为long类型。</p>
+<p><strong>慎用对象池，维护自己的对象池通常会把代码库弄得很乱，同时增加内存占用，并且还会损害性能。现代的JVM实现具有高度优化的垃圾回收机制，其性能很快就会超过轻量级对象池的性能</strong></p>
+<h2 id="6-消除过期的引用"><a href="#6-消除过期的引用" class="headerlink" title="6.消除过期的引用"></a>6.消除过期的引用</h2><p>清空对象引用的最好办法应该是让包含该引用的变量结束其生命周期。如果正确使用了局部变量那么这种消除操作会自然而然的发生。 除此之外，如果是依赖于程序员自己管理的内存时，应该警惕内存泄露的问题。</p>
+<h2 id="7-避免使用终结方法"><a href="#7-避免使用终结方法" class="headerlink" title="7.避免使用终结方法"></a>7.避免使用终结方法</h2><p><strong>don’t use finalize()</strong></p>
+<h2 id="8-覆盖equals时请遵守通用约定"><a href="#8-覆盖equals时请遵守通用约定" class="headerlink" title="8.覆盖equals时请遵守通用约定"></a>8.覆盖equals时请遵守通用约定</h2><p>当覆盖了equals方法时应保证该方法依然遵循下列的性质。</p>
+<p>equals方法的一些性质(不包含null)：</p>
+<ul>
+<li>自反性：x, x.equals(x) 返回true</li>
+<li>对称性：x,y。x.equals(y) == y.equals(x)</li>
+<li>传递性：x,y,z x.equlas(y) == true 且 y.equals(z) 则 x.equlas(z)</li>
+<li>一致性：只要equals的比较操作在对象中的引用的信息没有被修改，那么多次调用得到结果是一致的</li>
+<li>对于任何非null的引用 x x.equals(null) 返回 false</li>
+</ul>
+<p>实现高质量 equals 方法的诀窍：</p>
+<ol>
+<li>使用==操作符检查 “参数是否为这个对象的引用” 如果是直接返回true。 （性能优化）</li>
+<li>使用instanceof操作符检查 “参数是否为正确的类型”。</li>
+<li>把参数转换成正确的类型 (因为上一条的检查所以可以安全的转换)</li>
+<li>对于该类中的每个“关键”域，检查参数中的域是否与该对象中的对应域相匹配。</li>
+<li>覆盖equals方法时总要覆盖hashCode方法</li>
+<li>不要将equals申明中的Object对象替换为其他已知的类型。（会使方法变成重载，记得使用@override)</li>
+</ol>
+<p>**对于既不是float也不是double类型的基本类型域可以直接使用==操作符。对于float域可以使用Float.compare方法，而对于double域，可以调用Double.compare。对于float和double域进行特殊处理是有必要的，因为存在着Float.NaN、-0.0f以及类似的double常量。并且存在着精度的偏差问题。<br>**</p>
+<h2 id="9-覆盖equals时总要覆盖hashCode"><a href="#9-覆盖equals时总要覆盖hashCode" class="headerlink" title="9.覆盖equals时总要覆盖hashCode"></a>9.覆盖equals时总要覆盖hashCode</h2><p>如果两个对象根据equals（Object）方法比较是相等的，那么调用这两个对象中任意一个对象的hashCode方法都必须产生相同的整数结果。</p>
+<h2 id="10-始终要覆盖toString"><a href="#10-始终要覆盖toString" class="headerlink" title="10.始终要覆盖toString"></a>10.始终要覆盖toString</h2><p>覆盖toString可以让类打印出更加有用的信息。 个人觉得始终说的有点太绝对，如果你坚信自己这个类不会被打印出来，那么还是没有必要去覆盖的。</p>
+<h2 id="11-谨慎地覆盖clone"><a href="#11-谨慎地覆盖clone" class="headerlink" title="11.谨慎地覆盖clone"></a>11.谨慎地覆盖clone</h2><p>不要使用clone，请自己实现深拷贝。</p>
+<h2 id="12-考虑实现Compareable接口"><a href="#12-考虑实现Compareable接口" class="headerlink" title="12.考虑实现Compareable接口"></a>12.考虑实现Compareable接口</h2><p>CompareTo的通用约定与equasls方法的相似：</p>
+<ol>
+<li>确保 a.compareTo(b) == - b.compareTo(a) 当且仅当a.compareTo(b) 抛出异常时 b.compareTo(a) 抛出异常。</li>
+<li>可传递： a.compareTo(b) &gt; 0 &amp;&amp; b.compareTo(z) &gt; 0 =&gt; a.compareTo(z) &gt; 0</li>
+<li>强烈建议 a.compareTo(b) == 0 =&gt; x.equlas(b)</li>
+</ol>
+<p>compareTo的比较要确保结果不会越界： return Integer.compare(a,b) 而不是 return a - b // 可能会溢出</p>
+<h2 id="13-使类和成员的可访问性最小化"><a href="#13-使类和成员的可访问性最小化" class="headerlink" title="13.使类和成员的可访问性最小化"></a>13.使类和成员的可访问性最小化</h2><p>如果类或者接口能被做到包级私有的，它就应该被做成包级私有的。通过把类或者接口做成包级私有的，它实际上成了这个包实现的一部分，而不是该包导出API的一部分，在以后发行版本中，可以对它进行修改、替换、或者删除，而无需担心会影响到现有的客户端。</p>
+<p>另外记住，实例域不能是公有的。如果域是非final的或者是指向一个可改变对象final引用。那么一旦使这个域为公有的，就放弃了对存储在这个域中值进行限制的能力，这意味着你也放弃了强制这个域不可变的能力。</p>
+<h2 id="14-在公有类中使用访问方法而非公有域"><a href="#14-在公有类中使用访问方法而非公有域" class="headerlink" title="14.在公有类中使用访问方法而非公有域"></a>14.在公有类中使用访问方法而非公有域</h2><p>getter、setter意义： 如果类可以在它所在的包外部进行方法，就提供访问方法，以保留将来改变该类内部表示法的灵活性。如果公有类暴露了它的数据域，要想在在将来改变其内部方法是不可能的，因为公有类客户端代码已经遍布各处了。</p>
+<h2 id="15-使可变性最小"><a href="#15-使可变性最小" class="headerlink" title="15.使可变性最小"></a>15.使可变性最小</h2><p>为了使类成为不可变的，要遵循下面五条规则：</p>
+<ol>
+<li>不要提供任何修改对象状态的方法</li>
+<li>保证类不会被扩展</li>
+<li>使所有的域都是final的</li>
+<li>使所有的域都是私有的</li>
+<li>确保对于任何可变组件的互斥访问。如果类有指向可变对象的域要确保该对象不被客户端引用</li>
+<li>不可变对象本质是线程安全的，他们不需要同步。可以被自由的共享。且可以配合静态工厂方法实现缓存。</li>
+</ol>
+<p><strong>不可变对象的真正唯一缺点是，对于每个不同的值都要创建一个单独对象。创建这种对象可能代价很高。</strong></p>
+<h2 id="16-复合优先于继承"><a href="#16-复合优先于继承" class="headerlink" title="16.复合优先于继承"></a>16.复合优先于继承</h2><p>跨包继承存在危险，当父类改变了，会间接破坏了子类。 只有当子类真正是超类的子类型时，才适合使用继承。即必须有 “is-a” 关系。 否则考虑使用复合（包装类），包装类不仅比子类更加健壮，而且功能也更加强大（更易于扩展）。</p>
+<h2 id="17-要么为继承而设计，并提供文档说明，要么就禁止继承"><a href="#17-要么为继承而设计，并提供文档说明，要么就禁止继承" class="headerlink" title="17.要么为继承而设计，并提供文档说明，要么就禁止继承"></a>17.要么为继承而设计，并提供文档说明，要么就禁止继承</h2><h2 id="18-接口优于抽象类"><a href="#18-接口优于抽象类" class="headerlink" title="18.接口优于抽象类"></a>18.接口优于抽象类</h2><p>实现接口需要重复定义某些方法，这个问题在Java 8 中已经得到解决。但若非用到Java 8的新特性可以考虑引入骨架实现类，减少重复代码。 详情见骨架类笔记。</p>
+<h2 id="19-接口只用于定义类型"><a href="#19-接口只用于定义类型" class="headerlink" title="19.接口只用于定义类型"></a>19.接口只用于定义类型</h2><p>常量接口模式是对接口的不良使用。</p>
+<h2 id="20-类层次优先于标签类"><a href="#20-类层次优先于标签类" class="headerlink" title="20.类层次优先于标签类"></a>20.类层次优先于标签类</h2><p>标签类：用一个域来记录该类的性质 应该使用清晰的类层次而不是硬编码实现。</p>
+<h2 id="21-用函数对象表示策略"><a href="#21-用函数对象表示策略" class="headerlink" title="21.用函数对象表示策略"></a>21.用函数对象表示策略</h2><p>例如Comparator接口。 通过一个类实现了Comparator接口来后传递给Arrays.sort(a,new comp()) 实现一组对象的排序。这就是策略模式，不改变原对象的代码而是生成新策略来改变它的行为。</p>
+<p>相反Comparable接口则需要需要排序的类来实现它的compareTo方法。</p>
+<p>策略类可以使用匿名类，但是请注意使用匿名类时每次调用都会创建一个新的实例。如果反复使用的话可以将其存放在一个私有的静态final域里。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Host</span></span>&#123;<br>	<span class="hljs-comment">// 无需导出具体策略 , 还可以实现其他接口（Serializable)</span><br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StrLenCmp</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Comparator</span>&lt;<span class="hljs-title">String</span>&gt; , <span class="hljs-title">Serializable</span> </span>&#123;<br>		<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">compare</span><span class="hljs-params">(String s1,String s2)</span></span>&#123;<br>			<span class="hljs-keyword">return</span> s1.length() - s2.length();<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// 导出公有静态域</span><br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Comparator&lt;String&gt; STRING_LENGTH_COMPARATOR = <span class="hljs-keyword">new</span> StrLenCmp();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="22-优先考虑静态成员类"><a href="#22-优先考虑静态成员类" class="headerlink" title="22.优先考虑静态成员类"></a>22.优先考虑静态成员类</h2><p>如果申明成员类不要求访问外围实例，就要始终把static修饰符放在它的声明中，使它成为静态成员类而不是非静态成员类。如果省略了static修饰符，则每个实例都包含一个额外的指向外围对象的引用。保留这份引用需要消耗时间和空间，并且会导致外围实例在符合垃圾回收时却仍然得以保留。</p>
+<h2 id="23-请不要在新代码中使用原生态类型"><a href="#23-请不要在新代码中使用原生态类型" class="headerlink" title="23.请不要在新代码中使用原生态类型"></a>23.请不要在新代码中使用原生态类型</h2><p>使用泛型而不是原生类型。反省有子类型化的规则，List是List的子类型，而不是List的子类型。因此如果使用了List这样的原生态类型，就会失掉类型安全性。</p>
+<p>但是这条规则也有两个小小的例外,这两者都源于“泛型信息可以在运行时被擦除”这一事实。在类文字中必须使用原生态类型。规范不允许使用参数化类型（虽然允许数组类型和基本类型）。即List.class、String[].class和int.class都是合法的，但是List 和 List&lt;?&gt;.class 都是不合法的。</p>
+<p>Set&lt;?&gt; 无限制通配符不允许插入任何元素（除了null）</p>
+<h2 id="24-消除非受检警告"><a href="#24-消除非受检警告" class="headerlink" title="24.消除非受检警告"></a>24.消除非受检警告</h2><p>SuppressWarning(“unchecked”) 消除未受检警告，但是必须自己确保确实这个警告是不必要的。 <strong>永远不要在整个类上使用@SuppressWarnings，尽可能小范围的使用</strong></p>
+<p>你可以在整个方法上使用但也尽量不要而是用在一个局部变量上：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> &lt;T&gt; T[] toArray(T[] a) &#123;<br>	<span class="hljs-keyword">if</span> (a.length &lt; size) &#123;<br>		<span class="hljs-meta">@suppressWarnings(&quot;unchecked&quot;)</span><br>		T[] result = (T[]) Arrays.copyOf(elements,size,a.getClass());<br>		<span class="hljs-keyword">return</span> result;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="25-列表优先于数组"><a href="#25-列表优先于数组" class="headerlink" title="25.列表优先于数组"></a>25.列表优先于数组</h2><p>利用数组你会在运行时发现所犯的错误，而利用列表，则可以在编译时发现错误。因为数组是具体化的所以会在运行时才知道并检查他们的元素类型的约束。泛型则是通过擦除来实现的，因此泛型在编译时强化他们的类型信息，并在运行时丢弃（擦除）他们的元素类型信息。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">Object[] objectArray = <span class="hljs-keyword">new</span> Long[<span class="hljs-number">1</span>];<br>objectArray[<span class="hljs-number">0</span>] = <span class="hljs-string">&quot;I don&#x27;t fit in&quot;</span>; <span class="hljs-comment">// 运行时抛出异常</span><br><br>List&lt;Object&gt; o1  = <span class="hljs-keyword">new</span> ArrayList&lt;Long&gt;(); <span class="hljs-comment">// 编译时就抛出</span><br>o1.add(<span class="hljs-string">&quot;I don&#x27;t fit in&quot;</span>); <br></code></pre></td></tr></table></figure>
+
+<p>像E、List和List这样的类型被称作不可具体化的类型。直观的说，不可具体化的类型是指其运行时表示法包含的信息比其编译时包含的信息更少。唯一可具体化的参数化类型是无限制的通配符类型，例如List 和 Map。虽然不常用，但是创建无限制通配符类型的数组是合法的。</p>
+<h2 id="26-优先考虑泛型"><a href="#26-优先考虑泛型" class="headerlink" title="26.优先考虑泛型"></a>26.优先考虑泛型</h2><p>记住，你不能创建不可具体化的数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">E[] e = <span class="hljs-keyword">new</span> E[<span class="hljs-number">10</span>]; <span class="hljs-comment">// error</span><br></code></pre></td></tr></table></figure>
+
+<p>因此应该优先考虑使用泛型，即使使代码没有那么简洁，但是更加安全也更加容易。</p>
+<p>27.优先考虑泛型方法<br>理由和上一条类似，更加安全、可靠。</p>
+<p>28.利用有限制通配符来提升API灵活性<br>PECS = producer-extends , consumer-super 原则 如果参数化类型表示一个T生产证，就使用&lt;? extends T&gt; 如果表示的是一个消费者使用&lt;? super T&gt;</p>
+<p>一般来说，如果类型参数只在方法申明中出现一次，就可以用通配符来取代它。如果是无限制的类型参数，就用无限制的通配符来取代它；如果是有限制的类型参数，就用有限制的通配符取代它。</p>
+<h2 id="29-优先考虑类型安全的异构容器"><a href="#29-优先考虑类型安全的异构容器" class="headerlink" title="29.优先考虑类型安全的异构容器"></a>29.优先考虑类型安全的异构容器</h2><p>异构容器是指能够容纳不同类型对象的容器。像我们通常用的List、Map等容器，它们的原生态类型本身就是异构容器，一旦给它们设置了泛型参数，例如List、Map&lt;Integer, String&gt;，它们就不再是异构容器。但是，原生态类型是不安全的，你无法知道从容器取出的类型到底是什么，很容易导致错误。因此，如何构建类型安全的异构容器就成了一个重要的话题。</p>
+<p>使用Map实现类型安全的异构容器 局限性 使用Map实现类型安全的异构容器</p>
+<p>我们将要实现一个Favorites类，用来对每个类型保存一个最喜欢的实例。它的API如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Favorites</span> </span>&#123;<br>  <span class="hljs-keyword">public</span> &lt;T&gt; <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">putFavorite</span><span class="hljs-params">(Class&lt;T&gt; type, T instance)</span></span>;<br>  <span class="hljs-keyword">public</span> &lt;T&gt; <span class="hljs-function">T <span class="hljs-title">getFavorite</span><span class="hljs-params">(Class&lt;T&gt; type)</span></span>;<br>&#125;```<br><br>下面是一个测试程序，说明了如何使用Favorites类保存、获取并打印最喜爱的String、Integer和Class实例。<br><br>```<span class="hljs-function">java</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;<br>  Favorites f = <span class="hljs-keyword">new</span> Favorites();<br>  f.putFavorite(String.class, <span class="hljs-string">&quot;Java&quot;</span>);<br>  f.putFavorite(Integer.class, <span class="hljs-number">0xcafebabe</span>);<br>  f.putFavorite(Class.class, Favorites.class);<br>  String favoriteString = f.getFavorite(String.class);<br>  <span class="hljs-keyword">int</span> favoriteInteger = f.getFavorite(Integer.class);<br>  Class&lt;?&gt; favoriteClass = f.getFavorite(Class.class);<br>  System.out.printf(<span class="hljs-string">&quot;%s %x %s%n&quot;</span>, favoriteString, favoriteInteger, favoriteClass.getName());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>打印结果是 Java cafebabe Favorites Favorite实例是类型安全的，当你向它请求String的时候，它绝不会返回一个Integer给你。同时它也是异构的，它的键可以是任意类型。</p>
+<p>Favorites的实现也很简单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Favorites</span> </span>&#123;<br>  <span class="hljs-keyword">private</span> Map&lt;Class&lt;?&gt;, Object&gt; favorites = <span class="hljs-keyword">new</span> HashMap&lt;Class&lt;?&gt;, Object&gt;();<br><br>  <span class="hljs-keyword">public</span> &lt;T&gt; <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">putFavorite</span><span class="hljs-params">(Class&lt;T&gt; type, T instance)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (type == <span class="hljs-keyword">null</span>)<br>      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> NullPointerException(<span class="hljs-string">&quot;Type is null&quot;</span>);<br>    favorites.put(type, instance);<br>  &#125;<br><br>  <span class="hljs-keyword">public</span> &lt;T&gt; <span class="hljs-function">T <span class="hljs-title">getFavorite</span><span class="hljs-params">(Class&lt;T&gt; type)</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> type.cast(favorites.get(type));<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>内部用一个Map&lt;Class, Object&gt;来保存所有的爱好，使用Class作为键记录每个爱好的类型，而用Object作为值不再区分它们的类型。当取出时，根据请求的类型从Map中查找相应的值，由于值是Object类型的，需要使用type.cast强制转换为type指定的类型。只要客户端按照API的要求使用，这里的强制转换一定不会出错。</p>
+<p>局限性</p>
+<p>这种实现方法有两种局限性。</p>
+<p>首先，恶意的客户端可以破坏Favorites实例的类型安全。如果客户端传入原生态的Class对象和不一致的值对象，则会在getFavorite的cast时抛出ClassCastException异常。不过好在我们可以对这一情况加以约束。只需要在put时使用一个动态的转换就可以了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> &lt;T&gt; <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">putFavorite</span><span class="hljs-params">(Class&lt;T&gt; type, T instance)</span> </span>&#123;<br>  favorites.put(type, type.cast(instance));<br>&#125;```<br><br>一旦客户端传入值类型不一致，就立即抛出异常。<br><br>第二种局限性是它不能用于泛型化类型，例如，你无法把List作为Favorites的键，因为List.class是个语法错误。这一局限性还没有很好的解决方法。<br><br>## <span class="hljs-number">30.</span>用<span class="hljs-class"><span class="hljs-keyword">enum</span>代替<span class="hljs-title">int</span>常量</span><br><span class="hljs-class"></span><br><span class="hljs-class"><span class="hljs-title">Java</span>枚举类型背后的基本思想非常简单：他们就是用公有的静态<span class="hljs-title">final</span>域为每个枚举常量导出实例的类。因为没有可以访问的构造器，枚举类型是真正的<span class="hljs-title">final</span>。 枚举类还有一个好处，你可以增加或者重排列枚举类型中的常量，而无需重新编译它的客户端代码，因为导出常量的域在枚举类型和他的客户端之间提供了一个隔离层：常量值并没有被编译到客户端代码中，而是在<span class="hljs-title">int</span>枚举模式中。</span><br><span class="hljs-class"></span><br><span class="hljs-class">**枚举的<span class="hljs-title">toString</span>方法返回每个枚举的声明名字。<span class="hljs-title">valueOf</span>方法通过名字来获取枚举类,<span class="hljs-title">valueOf</span>方法依赖于默认的<span class="hljs-title">toString</span>方法因此如果覆盖了<span class="hljs-title">toString</span>将不再有用。**</span><br><span class="hljs-class"></span><br><span class="hljs-class">特定于方法的方法实现: 可以在枚举中申明一个抽象方法，这样所有的枚举常量都得实现它：</span><br><span class="hljs-class"></span><br><span class="hljs-class">```<span class="hljs-title">java</span></span><br><span class="hljs-class"><span class="hljs-title">public</span> <span class="hljs-title">enum</span> <span class="hljs-title">type</span></span>&#123;<br>	JSON&#123;<br>		<span class="hljs-function">String <span class="hljs-title">convert</span><span class="hljs-params">(String raw)</span> </span>&#123; <br>			<span class="hljs-comment">//...covert in json </span><br>		&#125;<br>	&#125;, XML &#123;<br>		<span class="hljs-function">String <span class="hljs-title">covert</span><span class="hljs-params">(String raw)</span> </span>&#123;<br>			<span class="hljs-comment">//...convert in xml</span><br>		&#125;<br>	&#125;<br>	<span class="hljs-function"><span class="hljs-keyword">abstract</span> String <span class="hljs-title">convert</span><span class="hljs-params">(String raw)</span></span>;<br>&#125;```<br><br>嵌套的枚举：策略枚举模式 假如对于一个枚举每次都得选择一个方法，就想上述的特定于方法的方法实现，但是有很多个枚举他们用的方法是一样的，如果用上述的代码你得重复写很多一样的代码。这个时候可以考虑将方法嵌套在一个内部类中，对于外部枚举每定义一个就选择一个策略。<br><br>```java<br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">PayrollDay</span> </span>&#123;<br>    MONDAY(PayType.WEEKDAY), <br>    TUESDAY(PayType.WEEKDAY), <br>    WEDNESDAY(PayType.WEEKDAY), <br>    THURADAY(PayType.WEEKDAY), <br>    FRIDAY(PayType.WEEKDAY), <br>    SATURDAY(PayType.WEEKEND),<br>    SUNDAY(PayType.WEEKEND);<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> PayType payType;<br>    PayrollDay(PayType payType) &#123;<br>        <span class="hljs-keyword">this</span>.payType = payType;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">double</span> <span class="hljs-title">pay</span><span class="hljs-params">(<span class="hljs-keyword">double</span> hoursWorked, <span class="hljs-keyword">double</span> payRate)</span> </span>&#123;<br>        <span class="hljs-keyword">return</span> payType.pay(hoursWorked, payRate);<br>    &#125;<br><br>    <span class="hljs-comment">//私有嵌套的枚举类</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">PayType</span> </span>&#123;<br>        WEEKDAY &#123;<br>            <span class="hljs-function"><span class="hljs-keyword">double</span> <span class="hljs-title">pay</span><span class="hljs-params">(<span class="hljs-keyword">double</span> hoursWorked, <span class="hljs-keyword">double</span> payRate)</span> </span>&#123;<br>                <span class="hljs-keyword">return</span> hoursWorked - HOURS_PER_SHIFT &gt; <span class="hljs-number">0</span> <br>                    ?(hoursWorked*payRate*<span class="hljs-number">1.5</span> - <span class="hljs-number">0.5</span>*HOURS_PER_SHIFT*payRate) <br>                    : hoursWorked*payRate;<br>            &#125;<br>        &#125;,<br>        WEEKEND &#123;<br>            <span class="hljs-function"><span class="hljs-keyword">double</span> <span class="hljs-title">pay</span><span class="hljs-params">(<span class="hljs-keyword">double</span> hoursWorked, <span class="hljs-keyword">double</span> payRate)</span> </span>&#123;<br>                <span class="hljs-keyword">return</span> hoursWorked * payRate * <span class="hljs-number">1.5</span>;<br>            &#125;<br>        &#125;;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> HOURS_PER_SHIFT = <span class="hljs-number">8</span>;<br><br>        <span class="hljs-function"><span class="hljs-keyword">abstract</span> <span class="hljs-keyword">double</span> <span class="hljs-title">pay</span><span class="hljs-params">(<span class="hljs-keyword">double</span> hoursWorked, <span class="hljs-keyword">double</span> payRate)</span></span>;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;<br>        System.out.println(PayrollDay.MONDAY.pay(<span class="hljs-number">10</span>,<span class="hljs-number">10</span>));<br>        System.out.println(PayrollDay.SUNDAY.pay(<span class="hljs-number">10</span>,<span class="hljs-number">10</span>));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="31-用实例域代替序数"><a href="#31-用实例域代替序数" class="headerlink" title="31.用实例域代替序数"></a>31.用实例域代替序数</h2><p>所有枚举类都有一个ordinal方法，它返回枚举常量在类型中的数字位置。**但是永远不要根据枚举的序数导出与它关联的值，你应该将它保存在一个实例域中。<br>**</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Enumble</span></span>&#123;<br>	SOLE(<span class="hljs-number">1</span>),DUET(<span class="hljs-number">2</span>);<br><br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> number;<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Enumble</span><span class="hljs-params">(<span class="hljs-keyword">int</span> size)</span></span>&#123;<br>		<span class="hljs-keyword">this</span>.number = size;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="32-用EnumSet代替位域"><a href="#32-用EnumSet代替位域" class="headerlink" title="32.用EnumSet代替位域"></a>32.用EnumSet代替位域</h2><p>如果方法需要传递多个枚举值，使用EnumSet会比用位域来控制更好。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Main</span> </span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Style</span> </span>&#123;BOLD, ITALTC, UNDERLTINE&#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">applyStyles</span><span class="hljs-params">(Set&lt;Style&gt; styles)</span> </span>&#123;<br>        System.out.println(styles);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;<br>        Main main = <span class="hljs-keyword">new</span> Main();<br>        main.applyStyles(EnumSet.of(Style.BOLD, Style.ITALTC));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="33-使用EnumMap代替序数索引"><a href="#33-使用EnumMap代替序数索引" class="headerlink" title="33.使用EnumMap代替序数索引"></a>33.使用EnumMap代替序数索引</h2><p>千万不要使用ordinal来索取枚举类型。可以使用EnumMap来代替索引。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Main</span> </span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Style</span> </span>&#123;BOLD, ITALTC, UNDERLTINE&#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> EnumMap&lt;Style, String&gt; <span class="hljs-title">push</span><span class="hljs-params">()</span> </span>&#123;<br>        EnumMap&lt;Style, String&gt; enumMap = <span class="hljs-keyword">new</span> EnumMap&lt;Style, String&gt;(Style.class);<br>        enumMap.put(Style.BOLD,<span class="hljs-string">&quot;good&quot;</span>);<br>        enumMap.put(Style.ITALTC,<span class="hljs-string">&quot;normal&quot;</span>);<br>        <span class="hljs-keyword">return</span> enumMap;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;<br>        Main main = <span class="hljs-keyword">new</span> Main();<br>        EnumMap&lt;Style,String&gt; enumMap = main.push();<br>        System.out.println(enumMap.get(Style.BOLD));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="34-用接口模拟可伸缩的枚举"><a href="#34-用接口模拟可伸缩的枚举" class="headerlink" title="34.用接口模拟可伸缩的枚举"></a>34.用接口模拟可伸缩的枚举</h2><p>虽然枚举类型不是可以扩展的，但是接口是。因此可以利用接口来模拟可以伸缩的枚举。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Operation</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">double</span> <span class="hljs-title">apply</span><span class="hljs-params">(<span class="hljs-keyword">double</span> x, <span class="hljs-keyword">double</span> y)</span></span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">BaseOperation</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Operation</span> </span>&#123;<br>    PLUS(<span class="hljs-string">&quot;+&quot;</span>) &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">apply</span><span class="hljs-params">(<span class="hljs-keyword">double</span> x, <span class="hljs-keyword">double</span> y)</span> </span>&#123;<br>            <span class="hljs-keyword">return</span> x + y;<br>        &#125;<br>    &#125;;<br><br>    <span class="hljs-keyword">private</span> String symbol;<br><br>    BaseOperation(String symbol) &#123;<br>        <span class="hljs-keyword">this</span>.symbol = symbol;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>也可以将方法申明为抽象的实现这种伸缩性。（30条）</p>
+<h2 id="35-注解优先于命名模式"><a href="#35-注解优先于命名模式" class="headerlink" title="35.注解优先于命名模式"></a>35.注解优先于命名模式</h2><p>使用合适的注解，会比你对一个方法任何简明的命名更加让人了解它的用途。</p>
+<h2 id="36-坚持使用Override注解"><a href="#36-坚持使用Override注解" class="headerlink" title="36.坚持使用Override注解"></a>36.坚持使用Override注解</h2><p>Override通常能让你避免重载了方法却以为是覆盖了方法。</p>
+<h2 id="37-用标记接口定义类型"><a href="#37-用标记接口定义类型" class="headerlink" title="37.用标记接口定义类型"></a>37.用标记接口定义类型</h2><p>标记接口是没有包含方法申明的接口，而只是指明一个类实现了具有某种属性的接口。例如，考虑Serializable接口，通过实现这个接口，类表明它的实例可以被写到ObjectOutputStream。 <strong>注解以及标记接口区分使用：</strong></p>
+<ul>
+<li>注解：该标记应用到任何元素而不是只给类和接口。因为只有类和接口可以用来或者扩展接口。</li>
+<li>标记接口：只应用给类和接口。</li>
+</ul>
+<h2 id="38-检查参数的有效性"><a href="#38-检查参数的有效性" class="headerlink" title="38.检查参数的有效性"></a>38.检查参数的有效性</h2><p>每当编写方法或者构造器的时候，应该考虑它的参数有哪些限制。应该把这些限制写到文档中，并且在这个方法体的开头处，通过显示的检查来实施这些限制。</p>
+<h2 id="39-必要时进行保护性拷贝"><a href="#39-必要时进行保护性拷贝" class="headerlink" title="39.必要时进行保护性拷贝"></a>39.必要时进行保护性拷贝</h2><p>保护性拷贝是在检查参数的有效性之前进行的，并且有效性检查是针对拷贝之后的对象，而不是针对原始对象。这样做可以避免在检查参数以及拷贝对象参数时间段间原始对象的改变。 使用保护性拷贝主要是预防原始对象的改变而对当前对象造成非预期的异常。所以只要可能就应该尽可能的使用不可变对象。</p>
+<h2 id="40-谨慎设计方法签名"><a href="#40-谨慎设计方法签名" class="headerlink" title="40.谨慎设计方法签名"></a>40.谨慎设计方法签名</h2><ul>
+<li>谨慎地选择方法的名称。</li>
+<li>不要过于追求提供便利的方法。每个方法都应该尽其所能。只有当一个些组合的方法经常被调用时才为他们创建“快捷方式”。</li>
+<li>避免过长的参数。目标是四个或者更少。</li>
+<li>对于参数类型，要优先使用接口而不是类。</li>
+</ul>
+<h2 id="41-慎用重载"><a href="#41-慎用重载" class="headerlink" title="41.慎用重载"></a>41.慎用重载</h2><p>重载方法，要调用哪一个重载方法是在编译时决定的。因此重载方法的选择是静态的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test</span><span class="hljs-params">()</span></span>&#123;<br>	Collection&lt;?&gt; c = <span class="hljs-keyword">new</span> HashSet&lt;&gt;();<br>	classify(c);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">classify</span><span class="hljs-params">(Collection&lt;?&gt; c)</span></span>&#123;<br>	<span class="hljs-comment">//打印出这个</span><br>	System.out.println(<span class="hljs-string">&quot;collection&quot;</span>);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">classify</span><span class="hljs-params">(Set&lt;?&gt; s)</span></span>&#123;<br>	System.out.println(<span class="hljs-string">&quot;set&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>所以上面代码只有Collection这个方法会被选中因为在编译时，c对象就是Collection类型。 **需要当心覆盖机制没有成功覆盖而变成了重载，因此要坚持使用@Override<br>**</p>
+<h2 id="42-慎用可变参数"><a href="#42-慎用可变参数" class="headerlink" title="42.慎用可变参数"></a>42.慎用可变参数</h2><p>在重视性能的情况下，使用可变参数要小心。可变参数方法的每次调用都会导致进行一次数组分配和初始化。有一个改进办法，为这个方法提供5个重载方法，分别为0个、1个、2个、3个、3个以上参数版本。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">foo</span><span class="hljs-params">()</span> </span>&#123;&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">foo</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a1)</span> </span>&#123;&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">foo</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a1,<span class="hljs-keyword">int</span> a2)</span> </span>&#123;&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">foo</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a1,<span class="hljs-keyword">int</span> a2,<span class="hljs-keyword">int</span> a3)</span> </span>&#123;&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">foo</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a1,<span class="hljs-keyword">int</span> a2,<span class="hljs-keyword">int</span> a3, <span class="hljs-keyword">int</span>... rest)</span> </span>&#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>EnumSet类对它的静态工厂使用这种方法，最大限度的减少创建枚举集合的成本。当时这么做是必要的，因为枚举集合为位域提供在性能方面有竞争力的替代方法。</p>
+<h2 id="43-返回零长度的数组或者集合-而不是null"><a href="#43-返回零长度的数组或者集合-而不是null" class="headerlink" title="43.返回零长度的数组或者集合,而不是null"></a>43.返回零长度的数组或者集合,而不是null</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Chesse&gt; <span class="hljs-title">getCheeseList</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-keyword">if</span> (cheeseInStock.isEmpty())&#123;<br>		<span class="hljs-comment">// 永远返回同一个对象</span><br>		<span class="hljs-keyword">return</span> Collections.emptyList();<br>	&#125;<span class="hljs-keyword">else</span>&#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ArrayList&lt;Cheese&gt;(cheeseInStock);<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>返回类型为数组或者集合而不是null，可以避免客户端调用抛出的空指针异常。使用Collections.emptyList等方法可以返回同一个空对象节省对象创建的资源。</p>
+<h2 id="44-为所有导出的API元素编写文档注释"><a href="#44-为所有导出的API元素编写文档注释" class="headerlink" title="44.为所有导出的API元素编写文档注释"></a>44.为所有导出的API元素编写文档注释</h2><p>如果是编写API务必遵守</p>
+<h2 id="45-将局部变量的作用域最小化"><a href="#45-将局部变量的作用域最小化" class="headerlink" title="45.将局部变量的作用域最小化"></a>45.将局部变量的作用域最小化</h2><p>要使局部变量的作用域最小化最有力的方式是在第一次使用它的地方申明，不要提前！ 几乎每个局部变量的申明都应该包含一个初始化表达式。如果你还没有足够的信息来对这个变量进行有意义的初始化，就应该推迟这个申明。</p>
+<p>**for循环 以及 while ** 如果在循环的终止之后就不再需要使用循环变量的内容应该更优先于使用for。</p>
+<h2 id="46-for-each循环优先于传统的for循环"><a href="#46-for-each循环优先于传统的for循环" class="headerlink" title="46.for-each循环优先于传统的for循环"></a>46.for-each循环优先于传统的for循环</h2><p><strong>利用</strong>for-each循环不会有性能的损失，甚至用数组也一样。</p>
+<p>三种情况不能用for-each：</p>
+<ol>
+<li>过滤 如果需要遍历集合，并删除特定的元素，就需要使用显示的迭代器，以便可以调用它的remove方法。</li>
+<li>转换 如果需要遍历列表或者数组，并取代它部分或者全部的元素值，就需要列表迭代器或者数组索引，以便设定元素的值。</li>
+<li>平行迭代 如果需要并行的遍历多个集合，就需要显示的控制迭代器或者索引变量，以便所有迭代器或者索引变量都可以同步前移。</li>
+</ol>
+<h2 id="47-了解和使用类库"><a href="#47-了解和使用类库" class="headerlink" title="47.了解和使用类库"></a>47.了解和使用类库</h2><p>类库或者第三方库（guava等）拥有的方法应该了解并使用它们而不要亲自造轮子。</p>
+<h2 id="48-如果需要精确的答案，请避免使用float和double"><a href="#48-如果需要精确的答案，请避免使用float和double" class="headerlink" title="48.如果需要精确的答案，请避免使用float和double"></a>48.如果需要精确的答案，请避免使用float和double</h2><p>float以及double不适合用于非常精确的计算。解决办法是使用BigDecimal、int或者long。后面两者不能进行浮点数计算。 此外使用BigDecimal有两个缺点：</p>
+<ol>
+<li>使用不方便</li>
+<li>效率低 但是BigDecimal<strong>可以很方便的控制保留小数</strong>。因此，如果你需要精确答案并且是浮点数类型的请使用BigDecimal。</li>
+</ol>
+<h2 id="49-基本类型优先于装箱基本类型"><a href="#49-基本类型优先于装箱基本类型" class="headerlink" title="49.基本类型优先于装箱基本类型"></a>49.基本类型优先于装箱基本类型</h2><p>基本类型和装箱基本类型的三个主要区别：</p>
+<ol>
+<li>基本类型只有值，装箱类型具有与他们值不同的唯一性——可以具有不同对象但是值相同</li>
+<li>装箱基本类型不仅有功能完备值还有非功能值：null<br>基本类型更加节省空间和时间<br>综上所述如果不是业务需求，更优先考虑基本类型。 使用过程中当心自动装箱、自动拆箱带来的不必要对象创建浪费。</li>
+</ol>
+<h2 id="50-如果其他类型更适合，则尽量避免使用字符串"><a href="#50-如果其他类型更适合，则尽量避免使用字符串" class="headerlink" title="50.如果其他类型更适合，则尽量避免使用字符串"></a>50.如果其他类型更适合，则尽量避免使用字符串</h2><ol>
+<li>字符串不适合代替其他的值类型。应该根据语义使用相对应的值类型</li>
+<li>字符串不适合代替枚举类型</li>
+<li>字符串不适合代替聚集类型，通常可以编写一个私有静态类来表示，而不是使用字符串</li>
+<li>字符串也不适合代替能力表字符串作为键可能会被共享引发不安全</li>
+</ol>
+<h2 id="51-当心字符串连接的性能"><a href="#51-当心字符串连接的性能" class="headerlink" title="51.当心字符串连接的性能"></a>51.当心字符串连接的性能</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 会被JVM自动转化为StringBuilder</span><br>String a = <span class="hljs-string">&quot;hello&quot;</span> + name + <span class="hljs-string">&quot; world&quot;</span>;<br><span class="hljs-comment">// 不会自动转化</span><br>String a = <span class="hljs-string">&quot;hello&quot;</span>;<br>a += name;<br>a += <span class="hljs-string">&quot; world&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>有多行拼接操作记得使用StringBuilder 或者 StringBuffer</p>
+<h2 id="52-通过接口引用对象"><a href="#52-通过接口引用对象" class="headerlink" title="52.通过接口引用对象"></a>52.通过接口引用对象</h2><p>使用接口引用对象，可以利用多态性，提升代码的可维护性。 例如使用List而不是ArrayList 将来发现该链表经常被修改想要改成LinkedList只需修改定义地方就可以了。</p>
+<h2 id="53-接口优先于反射机制"><a href="#53-接口优先于反射机制" class="headerlink" title="53.接口优先于反射机制"></a>53.接口优先于反射机制</h2><p>反射机制是Java一种很强大的机制，但是使用这种能力也是要付出代价的：</p>
+<ol>
+<li>丧失了编译时类型检查的好处。反射是在运行中进行的</li>
+<li>执行反射访问所需的代码非常笨拙和冗长。虽然可以使用第三方库，但是还是略显繁琐</li>
+<li>性能损失。反射方法调用比普通方法慢很多。</li>
+</ol>
+<p>因此，如果你编写的程序是必须要与编译时未知的类一起工作，如有可能就应该仅仅使用反射机制来实例化对象，而访问对象时则使用编译时已知的某个（父类）接口或者超类。 如果是与编译时已知的类一起工作的则不必要使用反射机制。</p>
+<h2 id="54-谨慎地使用本地方法"><a href="#54-谨慎地使用本地方法" class="headerlink" title="54.谨慎地使用本地方法"></a>54.谨慎地使用本地方法</h2><p>JNI允许JAVA应用程序可以调用本地方法。所谓调用本地方法是用本地程序语言（主要是C或者C++）来编写的特殊方法。本地方法在本地语言中可以执行任意的计算任务，并且返回到Java程序设计语言。 历史上使用本地方法主要是希望提升性能。<strong>但是使用本地方法来提升性能的做法不值得提倡。</strong>现在的VM已经非常快了无需再去借助其他语音。并且本地方法还有一些严重的缺点：</p>
+<ol>
+<li>本地语言不是安全的</li>
+<li>不可移植</li>
+<li>使用本地方法的应用程序难以调试</li>
+<li>进入和退出本地方法时需要固定的开销，浪费资源</li>
+<li>需要“胶合代码”的本地方法编写起来单调乏味，并且难以阅读</li>
+</ol>
+<h2 id="55-谨慎地进行优化"><a href="#55-谨慎地进行优化" class="headerlink" title="55.谨慎地进行优化"></a>55.谨慎地进行优化</h2><p>不要因为性能而牺牲合理的结构。需要努力编写好的程序而不是快的程序。如果好的程序不够快，它的结构将使它可以得到优化。好的程序体现了信息隐蔽的原则：只要有可能，它们就会把设计决策集中在单个模块中，因此可以改变单个决策，而不会影响到系统的其他部分。</p>
+<h2 id="56-遵守普遍接受的命名规范"><a href="#56-遵守普遍接受的命名规范" class="headerlink" title="56.遵守普遍接受的命名规范"></a>56.遵守普遍接受的命名规范</h2><p>Java规范 以及 驼峰命名</p>
+<p>57.只针对异常的情况才使用异常<br>不要为了快速、业务去滥用异常，只有在真正异常的情况下才使用他们。</p>
+<h2 id="58-对可恢复的情况使用受检异常，对编程错误使用运行时异常"><a href="#58-对可恢复的情况使用受检异常，对编程错误使用运行时异常" class="headerlink" title="58.对可恢复的情况使用受检异常，对编程错误使用运行时异常"></a>58.对可恢复的情况使用受检异常，对编程错误使用运行时异常</h2><p>Java提供了三种可抛出结构：</p>
+<ol>
+<li>受检的异常 —— 可恢复时使用</li>
+<li>运行时异常 —— 编程错误抛出</li>
+<li>错误</li>
+</ol>
+<h2 id="59-避免不必要地使用受检的异常"><a href="#59-避免不必要地使用受检的异常" class="headerlink" title="59.避免不必要地使用受检的异常"></a>59.避免不必要地使用受检的异常</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">try</span>&#123;<br>    obj.action(args);<br>&#125;<span class="hljs-keyword">catch</span>(TheCheckException e)&#123;<br>    <span class="hljs-comment">//Handle exceptional condition</span><br>    ...<br>&#125;<br><br><span class="hljs-comment">//重构为</span><br><span class="hljs-keyword">if</span> (obj.actionPermitted(args)&#123;<br>    obj.action(args);<br>&#125;<span class="hljs-keyword">else</span>&#123;<br>    <span class="hljs-comment">//Handle exception condition</span><br>    ...<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以考虑使受检的异常重构。这样的重构并不总是恰当的。但是在恰当的时候可以使API用起来更加的舒服。</p>
+<h2 id="60-优先使用标准异常"><a href="#60-优先使用标准异常" class="headerlink" title="60.优先使用标准异常"></a>60.优先使用标准异常</h2><p>最常见的可重用异常：</p>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>使用场合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IllealArgumentException</td>
+<td>非null到数值不正确</td>
+</tr>
+<tr>
+<td>IllegalStateException</td>
+<td>对于方法的调用而言，对象状态不适合</td>
+</tr>
+<tr>
+<td>NullPointerException</td>
+<td>在禁止使用null的情况下参数值为null</td>
+</tr>
+<tr>
+<td>IndexOutOfBoundsException</td>
+<td>下表参数值越界</td>
+</tr>
+<tr>
+<td>ConcurrentModificationException</td>
+<td>在禁止并发修改的情况下，检查到对象的并发修改</td>
+</tr>
+<tr>
+<td>UnsupportedOperationException</td>
+<td>对象不支持用户请求的方法</td>
+</tr>
+</tbody></table>
+<h2 id="61-抛出与抽象相对应的异常"><a href="#61-抛出与抽象相对应的异常" class="headerlink" title="61.抛出与抽象相对应的异常"></a>61.抛出与抽象相对应的异常</h2><p>想想这样一种情况：方法B抛出了一个受检的异常 ，那么方法A在内部调用方法B时，面对方法B抛出的受检异常，可以选择继续抛出向上传播这个异常， 也可以捕获这个异常进行处理。究竟是向上传播抛出，还是捕获处理呢？ 有一个指导原则是：抛出与抽象相对应的异常。 例如如果方法B抛出了NoSuchElementException这个受检异常，然而在方法A中调用方法B时，根据方法A中的逻辑，当遇到NoSuchElementException 异常时，抛出一个IndexsOutOfBoundsException异常更为合适。那么就不应该选择向上传播抛出NoSuchElementException，而是应该选择捕获NoSuchElementException，然后抛出IndexsOutOfBoundsException。 更高层的实现应该捕获底层的异常，同时抛出可以按照高层抽象进行解释的异常。这种做法称为异常转译（exception translation）。 一种特殊的异常转译形式称为异常链（exception chaining)。 尽管异常转译让异常更加明确。但是如有可能，处理来自底层的异常的最好的做法是，在调用低层方法之前确保它们会成功执行，从而避免它们抛出异常。 有时候，可以在给低层方法传递参数之前，检查更高层方法的参数的有效性，从而避免低层方法抛出异常。 如果无法避免低层异常，次选方案是，让更高层的方法来悄悄地绕开这些异常（方法C调用方法A，那么方法C就是更高层的方法）。那么在高层方法中 调用低层方法时，面对低层方法抛出的受检异常，高层异常可以捕获异常，转化为非受检异常，或者利用某种适当的记录机制（日志）将异常记录下来。 这样更高层的方法C在调用高层方法A是，不用再受来自低层方法的异常烦扰，而异常在高层方法中也得到了处理。</p>
+<h2 id="62-每个方法抛出的异常都要有文档"><a href="#62-每个方法抛出的异常都要有文档" class="headerlink" title="62.每个方法抛出的异常都要有文档"></a>62.每个方法抛出的异常都要有文档</h2><p>使用@thorws标签记录下一个方法可能抛出的每个未受检异常，但是不要使用throws的关键字将未受检异常也包含在方法的申明中。</p>
+<h2 id="63-在细节消息中包含能捕获失败失败的信息"><a href="#63-在细节消息中包含能捕获失败失败的信息" class="headerlink" title="63.在细节消息中包含能捕获失败失败的信息"></a>63.在细节消息中包含能捕获失败失败的信息</h2><p>为了确保在异常的细节消息中包含足够的能捕获失败的信息，一种办法是在异常的构造器而不是字符串细节信息。然后有了这些信息，只要把他们放到消息描述中，就可以自动产生细节消息了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-title">IndexOutBoundException</span><span class="hljs-params">(<span class="hljs-keyword">int</span> lowerBound,<span class="hljs-keyword">int</span> upperBound,<span class="hljs-keyword">int</span> index)</span></span>&#123;<br>	<span class="hljs-comment">//Generate a detail message that captures the failure</span><br>	<span class="hljs-keyword">super</span>(<span class="hljs-string">&quot;Lower bound: &quot;</span> + lowerBound +<br>		  <span class="hljs-string">&quot;,Upper bound: &quot;</span> + upperBound +<br>		  <span class="hljs-string">&quot;, Index:&quot;</span>);<br>	<span class="hljs-keyword">this</span>.lowerBound = lowerBound;<br>	<span class="hljs-keyword">this</span>.upperBound = upperBound;<br>	<span class="hljs-keyword">this</span>.index = index;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="64-努力使失败保持原子性"><a href="#64-努力使失败保持原子性" class="headerlink" title="64.努力使失败保持原子性"></a>64.努力使失败保持原子性</h2><p>失败的方法调用应该使对象保持在被调用之前的状态。具有这种属性的方法被称为具有失败原子性。 保持失败原子性的方法：</p>
+<ol>
+<li>最简单的方法设计不可变对象,如果对象不必变,那么失败原则性是必然.如果一个操作失败,它可能会组织创建新的对象,但永远不会使已有的对象保持在不一致的状态中,因为每个对象被创建后就处于一致的状态,以后再也不会改变.(实在没看懂)</li>
+<li>对于可变对象上执行操作的方法,获得失败原子性最常见的方法是,在执行操作之前检查参数有效性.使得对象状态被改变之前,先抛出适当异常.类似获取失败原子性的方法,调整计算过程顺序,使得任何可能导致失败的计算部分都在对象被改变之前发生.如果对参数检查只有执行部分计算后才进行,实际上就是上面方法的拓展而已.例如,考虑TreeMap情景,它的元素按照某种特定顺序排列,添加元素时,该元素的类型必须可以利用TreeMap的排序规则和其他元素比较.如果企图添加不正确的元素,在tree以任何方式被修改之前,自然会导致ClassCastException异常.</li>
+<li>不太常用的操作方法,编写一段恢复代码,由它来拦截操作过程中发生的失败,以及使对象回滚到操作开始之前的状态.这种方法主要用于永久性数据结构(存在磁盘中).</li>
+<li>在对象的一份临时拷贝上执行操作,当操作完成在用临时性拷贝的结果代替对象的内容.例如.Collections.sort在执行排序之前,需要把输入列表转到一个数组中,以便降低排序内循环中访问元素的开销.虽然是出于性能考虑,但是及时排序失败,能保证输入列表保持原样.</li>
+</ol>
+<h2 id="65-不要忽略异常"><a href="#65-不要忽略异常" class="headerlink" title="65.不要忽略异常"></a>65.不要忽略异常</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//don&#x27;t do that!</span><br><span class="hljs-keyword">try</span>&#123;<br>	...<br>&#125;<span class="hljs-keyword">catch</span>(SomeException e)&#123;<br>	<span class="hljs-comment">//empty</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<p><em>以下为并发笔记，可以参考之前写的并发笔记。因此写的比较简陋。</em></p>
+<hr>
+<h2 id="66-同步访问共享的可变数据"><a href="#66-同步访问共享的可变数据" class="headerlink" title="66.同步访问共享的可变数据"></a>66.同步访问共享的可变数据</h2><p>共享数据记得使用同步操作。或者使用线程安全的类。</p>
+<h2 id="67-避免过度同步"><a href="#67-避免过度同步" class="headerlink" title="67.避免过度同步"></a>67.避免过度同步</h2><p>缩小同步的范围、减小同步的粒度都可以很大程度提升性能。</p>
+<h2 id="68-executor优先于线程"><a href="#68-executor优先于线程" class="headerlink" title="68.executor优先于线程"></a>68.executor优先于线程</h2><p><strong>线程池的选择</strong> 如果编写的是小程序或者轻载的服务器使用Executors.newCachedThreadPool通常是个不错的选择，因为它不需要配置，并且一般情况下能够正确的完成工作。 但是在大负载的产品服务器中，最好使用Executors.newFixedThreadPool，因为它为你提供了一个包含固定线程数目的线程池，或者为了最大限度的控制它，就直接使用ThreadPoolExecutor类。</p>
+<p><strong>定时调度</strong> 虽然timer使用起来更加容易，但是被调度的小城吃executor更加灵活。timer只用一个线程来执行任务，这在面对长期运行的任务时，会影响到定时的准确性。如果timer唯一的线程抛出未被捕获的异常，timer就会停止运行。被调度的线程池支持多个线程，并且优雅的从抛出未受检异常任务中恢复。</p>
+<h2 id="69-并发工具优先于wait和notify"><a href="#69-并发工具优先于wait和notify" class="headerlink" title="69.并发工具优先于wait和notify"></a>69.并发工具优先于wait和notify</h2><p>使用并发工具，优先于wait和notify。 常用工具：</p>
+<ul>
+<li>阻塞队列</li>
+<li>CountDownLatch</li>
+</ul>
+<h2 id="70-线程安全性的文档化"><a href="#70-线程安全性的文档化" class="headerlink" title="70.线程安全性的文档化"></a>70.线程安全性的文档化</h2><p>导出API，应该同时编写好线程安全的文档</p>
+<h2 id="71-慎用延迟初始化"><a href="#71-慎用延迟初始化" class="headerlink" title="71.慎用延迟初始化"></a>71.慎用延迟初始化</h2><p>延迟初始化，最好的建议是“除非绝对必要，否则不要这么做。”</p>
+<h2 id="72-不要依赖于线程调度器"><a href="#72-不要依赖于线程调度器" class="headerlink" title="72.不要依赖于线程调度器"></a>72.不要依赖于线程调度器</h2><p>要编写健壮的、相应良好的、可移植的多线程应用程序，最好的办法是确保可运行线程的平均数量不明显多余处理器的数量。 线程不应该一直处于忙-等的状态，即反复地检查一个共享对象，以等待某些事情发生。你可能会想用方法Thread.yield来让这个线程让出CPU。但是不要企图这可以很好的“修正”这个问题。你可能好不容易的让程序能够工作，但是这样的程序仍然是不可移植的。同一个yield调用在一个JVM实现上能提高性能，而在另一个JVM上实现可能会更差。Thread.yield没有可测试的语义，更好的解决办法是重新构造应用程序，以减少可并发的线程数量。 所以慎用<strong>Thread.yield。</strong></p>
+<p>##73.避免使用线程组</p>
+<p>几乎可以说永远也不要使用线程组。</p>
+<p>##74.谨慎地实现Serializable接口</p>
+<ol>
+<li>实现Serializable接口而付出的最大代价是，一旦一个类被发布，就大大降低了“改变这个类的实现”的灵活性。因为序列化与反序列化版本必须要保持一致。</li>
+<li>实现Serializable的第二个代价是，它增加了出现Bug和安全漏洞的可能性。</li>
+<li>实现Serializable的第三个代价是，随着类发行新的版本，相关的测试负担也增加了。</li>
+</ol>
+<h2 id="75-考虑使用自定义的序列化形式"><a href="#75-考虑使用自定义的序列化形式" class="headerlink" title="75.考虑使用自定义的序列化形式"></a>75.考虑使用自定义的序列化形式</h2><h2 id="76-保护性地编写readObject方法"><a href="#76-保护性地编写readObject方法" class="headerlink" title="76.保护性地编写readObject方法"></a>76.保护性地编写readObject方法</h2><h2 id="77-对于实例控制，枚举类型优先于readResolve"><a href="#77-对于实例控制，枚举类型优先于readResolve" class="headerlink" title="77.对于实例控制，枚举类型优先于readResolve"></a>77.对于实例控制，枚举类型优先于readResolve</h2><h2 id="78-考虑使用序列化代理代替序列化实例"><a href="#78-考虑使用序列化代理代替序列化实例" class="headerlink" title="78.考虑使用序列化代理代替序列化实例"></a>78.考虑使用序列化代理代替序列化实例</h2><p><a target="_blank" rel="noopener" href="https://iamjohnnyzhuang.github.io/java/2017/03/29/Effective-Java-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-%E5%89%AF%E6%9C%AC.html">原文转自</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AE%83%E5%B1%B1%E4%B9%8B%E7%9F%B3/" class="category-chain-item">它山之石</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/java/" class="print-no-link">#java</a>
+      
+    </div>
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/mean-practice-on-cvm-aws/" title="MEAN 栈实践之 在 CVM、AWS 上部署小记">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">MEAN 栈实践之 在 CVM、AWS 上部署小记</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/dao-and-shu/" title="道与术">
+                        <span class="hidden-mobile">道与术</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://cdn.staticfile.org/waline/2.15.5/waline.min.css')
+      Fluid.utils.createScript('https://cdn.staticfile.org/waline/2.15.5/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://vercel-blog-comment-sandy.vercel.app","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/scripts/sakura_less.js"></script><!-- hexo injector body_end end --></body>
+</html>

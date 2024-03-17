@@ -1,0 +1,906 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/favicon-32x32.png">
+  <link rel="icon" href="/favicon/favicon-32x32.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#13323c">
+  <meta name="author" content="Sep">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="快速入门 camke, 掌握 cmake 在 c&#x2F;c++ 项目构建上魅力">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一文搞懂 CMake">
+<meta property="og:url" content="https://blog.septenary.cn/cmake-one-shot/index.html">
+<meta property="og:site_name" content="Sep&#39;s blog">
+<meta property="og:description" content="快速入门 camke, 掌握 cmake 在 c&#x2F;c++ 项目构建上魅力">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.septenary.cn/assets/cmake-one-shot-00.svg">
+<meta property="og:image" content="https://blog.septenary.cn/assets/cmake-one-shot-01.svg">
+<meta property="article:published_time" content="2022-01-08T15:18:17.000Z">
+<meta property="article:modified_time" content="2024-03-17T07:47:39.043Z">
+<meta property="article:author" content="Sep">
+<meta property="article:tag" content="cmake">
+<meta property="article:tag" content="ninja">
+<meta property="article:tag" content="vcpkg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.septenary.cn/assets/cmake-one-shot-00.svg">
+  
+  
+  
+  <title>一文搞懂 CMake ✍️ Sep&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.septenary.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":10,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#00bfa6","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"shell"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"ba4b70fc46a41b92c211dabf83df845c","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"KY2xelIyRT9MVrxAcB4hScJS-MdYXbMMI","app_key":"Tys2qvQf5WYXnV1GiOWsOBis","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ba4b70fc46a41b92c211dabf83df845c";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><script src="/scripts/hexo_resize_image.js"></script><!-- hexo injector body_begin end -->
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>📚 Sep&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn/assets/resume_en_2024.pdf" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Sep</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="一文搞懂 CMake"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-01-08 15:18" pubdate>
+          2022年1月8日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">一文搞懂 CMake</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>快速入门 camke, 掌握 cmake 在 c/c++ 项目构建上魅力</p>
+<span id="more"></span>
+
+<h1 id="认识-CMake"><a href="#认识-CMake" class="headerlink" title="认识 CMake"></a>认识 CMake</h1><p><img src="/assets/cmake-one-shot-00.svg" srcset="/img/loading.gif" lazyload alt="编译 c/c++ 项目的工具迭代"></p>
+<p>通过上图我们可以大致了解到: cmake 是一个跨平台项目构建工具, 通过 <code>cmake</code> 命令, 可以将讲简单的工程配置描述文件 CMakeFiles.txt (即指令合集) 构建成 makefile 文件，帮我们省去编写繁杂的 makefile, 然后在通过 <code>make</code> 命令将源代码编译成目标文件</p>
+<p>使用 cmake 工具, 首先需要安装 cmake 到本地环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew install cmake<br></code></pre></td></tr></table></figure>
+
+<p>安装好后, 接下来我们结合工程示例 <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin">https://github.com/oksep/cmake-begin</a> ，逐一讲解 cmake 相关概念</p>
+<h2 id="简单工程"><a href="#简单工程" class="headerlink" title="简单工程"></a>简单工程</h2><p>源码参考: <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/v1_basic">v1_basic</a>, 项目有如下文件结构:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">.<br>├── CMakeLists.txt<br>├── include<br>│   └── head.h<br>└── src<br>    ├── add.cpp<br>    ├── div.cpp<br>    ├── main.cpp<br>    ├── mult.cpp<br>    └── sub.cpp<br></code></pre></td></tr></table></figure>
+
+<p>我们主要讲解 CMakeLists.txt 每个指令的含义(重点关注注释):</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># 配置 cmake 最低版本</span><br><span class="hljs-keyword">cmake_minimum_required</span>(VERSION <span class="hljs-number">3.15</span>)<br><br><span class="hljs-comment"># 指定 C++ 编译标准, set 可以配置预定义宏, 也可以新增变量并赋值</span><br><span class="hljs-keyword">set</span>(CMAKE_CXX_STANDARD <span class="hljs-number">17</span>)<br><br><span class="hljs-comment"># 配置项目名称</span><br><span class="hljs-keyword">project</span>(CALC)<br><br><span class="hljs-comment"># 配置可执行文件输出路径</span><br><span class="hljs-keyword">set</span>(EXECUTABLE_OUTPUT_PATH <span class="hljs-variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/bin)<br><br><span class="hljs-comment"># 搜索指定目录的文件, 将得到的文件列表赋值给 SRC_LIST</span><br><span class="hljs-comment"># 搜索文件有两种方式: aux_source_directory() 和 file()</span><br><span class="hljs-comment"># 其中 CMAKE_CURRENT_SOURCE_DIR 为预定义宏, 表示当前文件路径</span><br><span class="hljs-comment"># aux_source_directory(./src SRC_LIST)</span><br><span class="hljs-keyword">file</span>(GLOB SRC_LIST <span class="hljs-variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src/*.cpp)<br><span class="hljs-keyword">file</span>(GLOB HEAD_LIST <span class="hljs-variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/<span class="hljs-keyword">include</span>/*.h)<br><br><span class="hljs-comment"># 指定头文件</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/<span class="hljs-keyword">include</span>)<br><br><span class="hljs-comment"># 将源文件 SRC_LIST 编译为可执行文件 app</span><br><span class="hljs-keyword">add_executable</span>(app <span class="hljs-variable">$&#123;SRC_LIST&#125;</span>)<br></code></pre></td></tr></table></figure>
+
+<p>执行 <code>cmake . -B ./build</code> 命令<br>cmake 会读取 CMakeLists.txt 的相关指令, 在 build 文件夹下生成以下构建文件:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">build<br>├── CMakeCache.txt<br>├── CMakeFiles<br>├── Makefile<br>└── cmake_install.cmake<br></code></pre></td></tr></table></figure>
+
+<p>执行构建命令 <code>cmake --build build</code>, 生成目标文件<br>这里实际上是执行了 make 命令的相关操作, 等价于 <code>cd build &amp;&amp; make</code>:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">[ 16%] Building CXX object CMakeFiles/app.dir/src/add.cpp.o<br>[ 33%] Building CXX object CMakeFiles/app.dir/src/div.cpp.o<br>[ 50%] Building CXX object CMakeFiles/app.dir/src/main.cpp.o<br>[ 66%] Building CXX object CMakeFiles/app.dir/src/mult.cpp.o<br>[ 83%] Building CXX object CMakeFiles/app.dir/src/sub.cpp.o<br><span class="hljs-meta">[100%</span><span class="bash">] Linking CXX executable /Users/sep/Documents/cmake-tutorial/v1_basic/bin/app</span><br><span class="hljs-meta">[100%</span><span class="bash">] Built target app</span><br></code></pre></td></tr></table></figure>
+
+<p>执行 <code>./bin/app</code> 一个简单的计算器程序就可以运行起来了:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">a = 12, b = 4<br>a + b = 16<br>a - b = 8<br>a * b = 48<br>a / b = 3.000000<br></code></pre></td></tr></table></figure>
+
+<h2 id="生成静态库-动态库"><a href="#生成静态库-动态库" class="headerlink" title="生成静态库/动态库"></a>生成静态库/动态库</h2><p>源码参考: <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/v2_gen_lib">v2_gen_lib</a>, 主要讲解 CMakeLists.txt 文件的配置(重点关注注释):</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cmake">...<br><span class="hljs-comment"># 配置库文件所输出的位置, LIBRARY_OUTPUT_PATH 为 cmake 预定义宏</span><br><span class="hljs-keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="hljs-variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)<br><br><span class="hljs-comment"># 生成静态库, calc_static 为库名称, STATIC 标识为静态库, SRC_LIST 为要编译的所有源文件</span><br><span class="hljs-comment"># output -&gt; libcalc.a</span><br><span class="hljs-keyword">add_library</span>(calc_static STATIC <span class="hljs-variable">$&#123;SRC_LIST&#125;</span>)<br><br><span class="hljs-comment"># 生成动态库, calc_shared 为库名称, SHARED 标识为动态库, SRC_LIST 为要编译的所有源文件</span><br><span class="hljs-comment"># output -&gt; libcalc.dylib</span><br><span class="hljs-keyword">add_library</span>(calc_shared SHARED <span class="hljs-variable">$&#123;SRC_LIST&#125;</span>) <br></code></pre></td></tr></table></figure>
+
+<p>这里可以对比 v1_basic 工程中的 CMakeLists.txt 文件, 配置生成了不同的目标文件:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th align="left">command</th>
+<th align="right">windows format</th>
+<th align="right">linux format</th>
+<th align="right">macOS format</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可执行文件</td>
+<td align="left">add_executable</td>
+<td align="right">.exe</td>
+<td align="right">/</td>
+<td align="right">/</td>
+</tr>
+<tr>
+<td>静态库文件</td>
+<td align="left">add_library</td>
+<td align="right">.lib</td>
+<td align="right">.a</td>
+<td align="right">.a</td>
+</tr>
+<tr>
+<td>动态库文件</td>
+<td align="left">add_library</td>
+<td align="right">.dll</td>
+<td align="right">.so</td>
+<td align="right">.dylib</td>
+</tr>
+</tbody></table>
+<p>同样执行 cmake 相关命令 <code>cmake . -B build &amp;&amp; cmake --build build</code>, 可以看到在 <em>lib/</em> 文件夹下, 输出了对应的库文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">lib<br>├── libcalc_static.a # 静态库<br>└── libcalc_shared.dylib # 动态库<br></code></pre></td></tr></table></figure>
+
+<h2 id="链接静态库"><a href="#链接静态库" class="headerlink" title="链接静态库"></a>链接静态库</h2><p>源码参考: <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/v3_link_static_lib">v3_link_static_lib</a>, 项目有如下文件结构:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">./v3_link_static_lib<br>├── CMakeLists.txt<br>├── include <br>│   └── head.h # 将 v2_gen_lib 中的 head.h 头文件拷贝到这里<br>├── lib <br>│   └── libcalc.a # 将 v2_gen_lib 生成的静态库拷贝到这里<br>└── src<br>    └── main.cpp<br></code></pre></td></tr></table></figure>
+
+<p>使工程链接静态库, 在 CMakeLists.txt 的主要配置(重点关注注释):</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cmake">...<br><span class="hljs-comment"># 静态库的头文件</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/<span class="hljs-keyword">include</span>)<br><br><span class="hljs-comment"># 要链接静态库的位置</span><br><span class="hljs-keyword">link_directories</span>(<span class="hljs-variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)<br><br><span class="hljs-comment"># 链接静态库 libcalc.a, 一般在指定链接库的时候, 会掐头去尾(lib___.a), 保留中间部分(calc)</span><br><span class="hljs-keyword">link_libraries</span>(calc)<br><br><span class="hljs-comment"># 生成可执行文件</span><br><span class="hljs-keyword">add_executable</span>(app <span class="hljs-variable">$&#123;SRC_LIST&#125;</span>)<br></code></pre></td></tr></table></figure>
+
+<p>执行 <code>cmake . -B build &amp;&amp; cmake --build build</code> 后, libcalc.a 被打包到了可执行文件中, 运行 <em>bin/app</em> 静态库 libcalc.a 立即被加载到内存中</p>
+<h2 id="链接动态库"><a href="#链接动态库" class="headerlink" title="链接动态库"></a>链接动态库</h2><p>源码参考: <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/v4_link_shared_lib">v4_link_shared_lib</a></p>
+<p>文件目录结构同 v3_link_static_lib, 我们将 v2_gen_lib 生成的动态库<strong>libcalc.dylib</strong> 放在 <em>lib/</em> 路径下, CMakeLists.txt 主要差异在(重点关注注释):</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># 静态库的头文件</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/<span class="hljs-keyword">include</span>)<br><br><span class="hljs-comment"># 要链接动态态库的位置</span><br><span class="hljs-keyword">link_directories</span>(<span class="hljs-variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)<br><br><span class="hljs-keyword">add_executable</span>(app <span class="hljs-variable">$&#123;SRC_LIST&#125;</span>)<br><br><span class="hljs-comment"># 先生成可执行程序 app, 再对动态库 calc 进行链接</span><br><span class="hljs-keyword">target_link_libraries</span>(app calc)<br></code></pre></td></tr></table></figure>
+
+<p>这里需要注意: 链接动态库, 是在 add_executable 生成 app 后再去配置的</p>
+<p>接下来执行 <code>cmake . -B build &amp;&amp; cmake --build build</code>, 运行 <em>bin/app</em>, 只有当真正调用到 calc 相关函数的时候, libcalc.dylib 才会被加载到内存中</p>
+<h2 id="子模块"><a href="#子模块" class="headerlink" title="子模块"></a>子模块</h2><p>源码参考: <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/v5_nested_project">v5_nested_project</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs shell">├── CMakeLists.txt<br>├── calc<br>│   ├── CMakeLists.txt<br>│   └── src<br>├── include<br>│   ├── calc.h<br>│   └── sort.h<br>├── sort<br>│   ├── CMakeLists.txt<br>│   └── src<br>├── test1<br>│   ├── CMakeLists.txt<br>│   └── calc.cpp<br>└── test2<br>    ├── CMakeLists.txt<br>    └── sort.cpp<br></code></pre></td></tr></table></figure>
+
+<p>这里我们定义了四个子模块和一个根模块</p>
+<ul>
+<li>计算器模块: calc/CMakeLists.txt 配置生成静态库</li>
+<li>排序模块: sort/CMakeLists.txt 配置生成动态库</li>
+<li>测试计算器模块: test1/CMakeLists.txt 配置测试链接静态库</li>
+<li>测试排序模块: test2/CMakeLists.txt 配置测试链接动态库</li>
+<li>根模块</li>
+</ul>
+<p>在根模块 CMakeLists.txt 中有如下定义(重点关注注释):</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">cmake_minimum_required</span>(VERSION <span class="hljs-number">3.15</span>)<br><span class="hljs-keyword">project</span>(<span class="hljs-keyword">test</span>)<br><span class="hljs-keyword">set</span>(CMAKE_CXX_STANDARD <span class="hljs-number">17</span>)<br><br><span class="hljs-comment"># 这里用 `set()` 指令定义了多个字段，这些字段在添加子模块时, 会被传递给各个子模块共享使用</span><br><span class="hljs-keyword">set</span>(LIB_PATH <span class="hljs-variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/lib)<br><span class="hljs-keyword">set</span>(EXEC_PATH <span class="hljs-variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/bin)<br><span class="hljs-keyword">set</span>(HEAD_PATH <span class="hljs-variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/<span class="hljs-keyword">include</span>)<br><span class="hljs-keyword">set</span>(LIB_CALC calc)<br><span class="hljs-keyword">set</span>(LIB_SORT sort)<br><span class="hljs-keyword">set</span>(APPNAME1 test1)<br><span class="hljs-keyword">set</span>(APPNAME2 test2)<br><br><span class="hljs-comment"># 告诉 cmake 该项目包含以下四个子模块</span><br><span class="hljs-keyword">add_subdirectory</span>(calc)<br><span class="hljs-keyword">add_subdirectory</span>(sort)<br><span class="hljs-keyword">add_subdirectory</span>(test1)<br><span class="hljs-keyword">add_subdirectory</span>(test2)<br></code></pre></td></tr></table></figure>
+
+<p>子模块 calc 的 CMakeLists.txt 配置(重点关注注释):</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cmake">...<br><span class="hljs-keyword">file</span>(GLOB SOURCES <span class="hljs-string">&quot;src/*.cpp&quot;</span>)<br><br><span class="hljs-comment"># 使用根模块声明的 HEAD_PATH 字段, 指定头文件路径</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;HEAD_PATH&#125;</span>)<br><br><span class="hljs-comment"># 使用根模块声明的 LIB_PATH 字段, 指定静态库输出路径</span><br><span class="hljs-keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="hljs-variable">$&#123;LIB_PATH&#125;</span>)<br><br><span class="hljs-comment"># 使用根模块声明的 LIB_CALC 字段, 指定静态库输出名称</span><br><span class="hljs-keyword">add_library</span>(<span class="hljs-variable">$&#123;LIB_CALC&#125;</span> STATIC <span class="hljs-variable">$&#123;SOURCES&#125;</span>)<br></code></pre></td></tr></table></figure>
+
+<p>其它子模块: sort/test1/test2 与 calc 模块类似, 都是使用了根模块声明的字段来配置各个子模块</p>
+<p>接下来执行 <code>cmake . -B build &amp;&amp; cmake --build build</code> 有以下日志:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs shell">-- The C compiler identification is AppleClang 15.0.0.15000100<br>-- The CXX compiler identification is AppleClang 15.0.0.15000100<br>-- Detecting C compiler ABI info<br>-- Detecting C compiler ABI info - done<br>-- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc - skipped<br>-- Detecting C compile features<br>-- Detecting C compile features - done<br>-- Detecting CXX compiler ABI info<br>-- Detecting CXX compiler ABI info - done<br>-- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ - skipped<br>-- Detecting CXX compile features<br>-- Detecting CXX compile features - done<br>-- Configuring done (0.9s)<br>-- Generating done (0.0s)<br>-- Build files have been written to: /Users/sep/Documents/cmake-tutorial/v5_nested_project/build<br>[  8%] Building CXX object calc/CMakeFiles/calc.dir/src/add.cpp.o<br>[ 16%] Building CXX object calc/CMakeFiles/calc.dir/src/div.cpp.o<br>[ 25%] Building CXX object calc/CMakeFiles/calc.dir/src/mult.cpp.o<br>[ 33%] Building CXX object calc/CMakeFiles/calc.dir/src/sub.cpp.o<br>[ 41%] Linking CXX static library /Users/sep/Documents/cmake-tutorial/v5_nested_project/lib/libcalc.a<br>[ 41%] Built target calc<br>[ 50%] Building CXX object sort/CMakeFiles/sort.dir/src/insert.cpp.o<br>[ 58%] Building CXX object sort/CMakeFiles/sort.dir/src/select.cpp.o<br>[ 66%] Linking CXX shared library /Users/sep/Documents/cmake-tutorial/v5_nested_project/lib/libsort.dylib<br>[ 66%] Built target sort<br>[ 75%] Building CXX object test1/CMakeFiles/test1.dir/calc.cpp.o<br>[ 83%] Linking CXX executable /Users/sep/Documents/cmake-tutorial/v5_nested_project/bin/test1<br>[ 83%] Built target test1<br>[ 91%] Building CXX object test2/CMakeFiles/test2.dir/sort.cpp.o<br><span class="hljs-meta">[100%</span><span class="bash">] Linking CXX executable /Users/sep/Documents/cmake-tutorial/v5_nested_project/bin/test2</span><br><span class="hljs-meta">[100%</span><span class="bash">] Built target test2</span><br></code></pre></td></tr></table></figure>
+
+<p>此时项目里新增了各个子模块构建出来的产物: </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">.<br>├── bin<br>│   ├── test1<br>│   └── test2<br>├── lib<br>│   ├── libcalc.a<br>│   └── libsort.dylib<br></code></pre></td></tr></table></figure>
+
+<p>可以分别执行 bin/test1 和 bin/test2 查看效果</p>
+<h2 id="静态库链接静态库"><a href="#静态库链接静态库" class="headerlink" title="静态库链接静态库"></a>静态库链接静态库</h2><p>源码参考: <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/v6_static_link_static_lib">v6_static_link_static_lib</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell">├── CMakeLists.txt<br>├── calc<br>│   ├── CMakeLists.txt<br>│   └── src<br>├── include<br>│   ├── calc.h<br>│   └── sort.h<br>├── sort<br>│   ├── CMakeLists.txt<br>│   └── src<br>└── test<br>    ├── CMakeLists.txt<br>    └── main.cpp<br></code></pre></td></tr></table></figure>
+
+<p>这里是对 v5_nested_project 做的改造, 各个子模块间的依赖关系有:</p>
+<blockquote>
+<p>test -&gt; sort.a(静态库) -&gt; calc.a(静态库)</p>
+</blockquote>
+<p>各模块配置r(重点关注注释):</p>
+<ul>
+<li><p>calc/CMakeLists.txt</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cmake">...<br><span class="hljs-comment"># 头文件路径</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;HEAD_PATH&#125;</span>)<br><br><span class="hljs-comment"># 指定静态库输出位置</span><br><span class="hljs-keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="hljs-variable">$&#123;LIB_PATH&#125;</span>)<br><br><span class="hljs-comment"># 指定生成静态库 calc</span><br><span class="hljs-keyword">add_library</span>(<span class="hljs-variable">$&#123;LIB_CALC&#125;</span> STATIC <span class="hljs-variable">$&#123;SOURCES&#125;</span>)<br></code></pre></td></tr></table></figure></li>
+<li><p>sort/CMakeLists.txt</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cmake">...<br><span class="hljs-comment"># 头文件路径</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;HEAD_PATH&#125;</span>)<br><br><span class="hljs-comment"># 链接静态库 calc</span><br><span class="hljs-keyword">link_libraries</span>(<span class="hljs-variable">$&#123;LIB_CALC&#125;</span>)<br><br><span class="hljs-comment"># 指定静态库输出位置</span><br><span class="hljs-keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="hljs-variable">$&#123;LIB_PATH&#125;</span>)<br><br><span class="hljs-comment"># 指定生成静态库 sort</span><br><span class="hljs-keyword">add_library</span>(<span class="hljs-variable">$&#123;LIB_SORT&#125;</span> STATIC <span class="hljs-variable">$&#123;SOURCES&#125;</span>)<br></code></pre></td></tr></table></figure></li>
+<li><p>sort/src/insert.cpp</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&quot;calc.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&quot;sort.h&quot;</span></span><br><br><span class="hljs-comment">// 这里包含静态库 calc 所声明的头文件, 正常调用函数就可以</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">sort_insert</span><span class="hljs-params">(<span class="hljs-keyword">int</span> *arr, <span class="hljs-keyword">int</span> len)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> s = <span class="hljs-built_in">add</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;sort_insert call add: s = %d\n&quot;</span>, s);<br>    ...<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li><p>test/CMakeLists.txt</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cmake">...<br><span class="hljs-comment"># 头文件路径</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;HEAD_PATH&#125;</span>)<br><br><span class="hljs-comment"># 链接库路径</span><br><span class="hljs-keyword">link_directories</span>(<span class="hljs-variable">$&#123;LIB_PATH&#125;</span>)<br><br><span class="hljs-comment"># 链接静态库 sort, 注意这里只需要链接 sort 就可以, sort 在构建时自动链接 calc</span><br><span class="hljs-keyword">link_libraries</span>(<span class="hljs-variable">$&#123;LIB_SORT&#125;</span>)<br><br><span class="hljs-comment"># 指定生成可执行文件 test</span><br><span class="hljs-keyword">add_executable</span>(<span class="hljs-keyword">test</span> <span class="hljs-variable">$&#123;SOURCES&#125;</span>)<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>接下来执行 <code>cmake . -B build &amp;&amp; cmake --build build</code> 便可以生成: 链接了静态库 sort (sort 链接了静态库 calc) 的可执行文件 bin/test</p>
+<h2 id="静态库链接动态库"><a href="#静态库链接动态库" class="headerlink" title="静态库链接动态库"></a>静态库链接动态库</h2><p>源码参考: <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/v7_static_link_shared_lib">v7_static_link_shared_lib</a></p>
+<p>这里是对 v6_static_link_static_lib 做的改造, 各个子模块间的依赖关系有:</p>
+<blockquote>
+<p>test -&gt; sort.a(静态库) -&gt; calc.dylib(动态库)</p>
+</blockquote>
+<p>配置静态库 sort 链接动态库 calc 主要有以下修改:</p>
+<ul>
+<li><p>calc/CMakeLists.txt</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># 指定头文件</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;HEAD_PATH&#125;</span>)<br><br><span class="hljs-comment"># 指定动态库输出路径</span><br><span class="hljs-keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="hljs-variable">$&#123;LIB_PATH&#125;</span>)<br><br><span class="hljs-comment"># 指定输出动态库 calc</span><br><span class="hljs-keyword">add_library</span>(<span class="hljs-variable">$&#123;LIB_CALC&#125;</span> SHARED <span class="hljs-variable">$&#123;SOURCES&#125;</span>)<br></code></pre></td></tr></table></figure></li>
+<li><p>calc/CMakeLists.txt</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># 指定头文件</span><br><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;HEAD_PATH&#125;</span>)<br><br><span class="hljs-comment"># 指定静态库输出路径</span><br><span class="hljs-keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="hljs-variable">$&#123;LIB_PATH&#125;</span>)<br><br><span class="hljs-comment"># 链接动态库文件路径</span><br><span class="hljs-keyword">link_directories</span>(<span class="hljs-variable">$&#123;LIB_PATH&#125;</span>)<br><br><span class="hljs-comment"># 指定输出静态库 sort</span><br><span class="hljs-keyword">add_library</span>(<span class="hljs-variable">$&#123;LIB_SORT&#125;</span> STATIC <span class="hljs-variable">$&#123;SOURCES&#125;</span>)<br><br><span class="hljs-comment"># 链接动态库</span><br><span class="hljs-keyword">target_link_libraries</span>(<span class="hljs-variable">$&#123;LIB_SORT&#125;</span> <span class="hljs-variable">$&#123;LIB_CALC&#125;</span>)<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>接下来执行 <code>cmake . -B build &amp;&amp; cmake --build build</code> 便可以生成: 链接了静态库 sort (sort 链接了动态库 calc) 的可执行文件 bin/test</p>
+<h2 id="CMake-常用指令"><a href="#CMake-常用指令" class="headerlink" title="CMake 常用指令"></a>CMake 常用指令</h2><p>除了上面几个案例介绍的指令外, 可以参考 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/315768216">这里</a> 和 <a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/latest/manual/cmake-commands.7.html">官网</a> 对 cmake 指令有更全面的了解</p>
+<h1 id="CMake-与-Ninja"><a href="#CMake-与-Ninja" class="headerlink" title="CMake 与 Ninja"></a>CMake 与 Ninja</h1><p><a target="_blank" rel="noopener" href="https://ninja-build.org/manual.html#_introduction">Ninja</a> 也是一个构建系统, 使用 ninja 构建项目相比 makefile 可以更快, 同时也支持跨平台, Ninja 与 CMake 的关系可以参考下图:</p>
+<p><img src="/assets/cmake-one-shot-01.svg" srcset="/img/loading.gif" lazyload alt="Ninja"></p>
+<p>我们可以通过 <code>cmake</code> 生成 <strong>.ninja</strong> 文件, 然后再用 <code>ninja</code> 命令执行构建生成目标文件</p>
+<p>使用 ninja, 首先需要在本地安装:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew install ninja<br></code></pre></td></tr></table></figure>
+
+<p>上面的章节中所用到的命令 <code>cmake . -B build</code> 都是生成的 makefile 构建文件, 这其实是 cmake 工具的生成器 <a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html#introduction">generators</a> 概念</p>
+<p>执行 <code>cmake --help</code> 可以查看到 cmake 的 generator 在本机系统支持生成哪些类型的构建文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell">Generators<br><br>The following generators are available on this platform (* marks default):<br>* Unix Makefiles               = Generates standard UNIX makefiles.<br>  Ninja                        = Generates build.ninja files.<br>  Ninja Multi-Config           = Generates build-&lt;Config&gt;.ninja files.<br>  Watcom WMake                 = Generates Watcom WMake makefiles.<br>  Xcode                        = Generate Xcode project files.<br>  ...<br></code></pre></td></tr></table></figure>
+
+<p>接下来再以 v1_basic 为案例执行命令 <code>cmake . -B build-ninja -GNinja</code>, 可以看到在 <em>build-ninja</em> 目录下有:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">├── CMakeCache.txt<br>├── CMakeFiles<br>├── build.ninja<br>└── cmake_install.cmake<br></code></pre></td></tr></table></figure>
+
+<p>以上是 cmake 生成的 ninja 相关构建文件, 我们可以 <code>cd build-ninja &amp;&amp; ninja</code> 执行构建编译, 也可以执行 <code>cmake --build build-ninja</code> 命令来生成可执行文件 <em>bin/app</em></p>
+<p>这里再附贴一下 makefile 与 ninja 在编译速度上更直观的对比演示:</p>
+<div style="width: 100%; min-width: 400px; max-width: 800px;">
+  <div style="position: relative; width: 100%; overflow: hidden;">
+    <p>
+      <iframe width="100%" height="415" src="https://www.youtube.com/embed/rm4nn4m-bBE?si=CTIhBC_L7t877LxK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </p>
+  </div>
+</div>
+
+<h1 id="CMake-与-vcpkg"><a href="#CMake-与-vcpkg" class="headerlink" title="CMake 与 vcpkg"></a>CMake 与 vcpkg</h1><p><a target="_blank" rel="noopener" href="https://github.com/microsoft/vcpkg/blob/master/README_zh_CN.md">vcpkg</a> 是 c/c++ 项目的依赖库管理工具, 可以帮助我们非常方便的管理三方库</p>
+<p>下载 vcpkg:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/microsoft/vcpkg<br></code></pre></td></tr></table></figure>
+
+<p>配置环境变量:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">export VCPKG_ROOT=[path-to-vcpkg]<br>export PATH=&quot;$VCPKG_ROOT:$PATH&quot;<br></code></pre></td></tr></table></figure>
+
+<h2 id="vcpkg-smaple"><a href="#vcpkg-smaple" class="headerlink" title="vcpkg-smaple"></a>vcpkg-smaple</h2><p>以 <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/vcpkg-sample">smaple 工程</a> 为例, 创建 vcpkg 相关配置:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">vcpkg new --application<br></code></pre></td></tr></table></figure>
+
+<p>vcpkg 会自动生成以下两个文件:</p>
+<ul>
+<li>vcpkg-configuration.json 仓库配置</li>
+<li>vcpkg.json 三方库依赖配置</li>
+</ul>
+<p>配置 vcpkg.json 管理三方库：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>  <span class="hljs-attr">&quot;dependencies&quot;</span>: [<br>    <span class="hljs-string">&quot;cxxopts&quot;</span>,<br>    <span class="hljs-string">&quot;fmt&quot;</span>,<br>    <span class="hljs-string">&quot;range-v3&quot;</span><br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>配置 CMakeLists.txt 文件:</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">cmake_minimum_required</span>(VERSION <span class="hljs-number">3.15</span>)<br><span class="hljs-keyword">set</span>(CMAKE_CXX_STANDARD <span class="hljs-number">17</span>)<br><br><span class="hljs-comment"># 配置 cmake tookchain</span><br><span class="hljs-keyword">set</span>(<br>    CMAKE_TOOLCHAIN_FILE $ENV&#123;VCPKG_ROOT&#125;/scripts/buildsystems/vcpkg.cmake<br>    CACHE <span class="hljs-keyword">STRING</span> <span class="hljs-string">&quot;Vcpkg toolchain file&quot;</span><br>)<br><br><span class="hljs-keyword">project</span>(fibonacci CXX)<br><br><span class="hljs-comment"># 查找三方库</span><br><span class="hljs-keyword">find_package</span>(fmt REQUIRED)<br><span class="hljs-keyword">find_package</span>(range-v3 REQUIRED)<br><span class="hljs-keyword">find_package</span>(cxxopts REQUIRED)<br><br><span class="hljs-keyword">add_executable</span>(fibo main.cxx)<br><br><span class="hljs-comment"># 链接三方库</span><br><span class="hljs-keyword">target_link_libraries</span>(fibo<br>  PRIVATE<br>    fmt::fmt<br>    range-v3::range-v3<br>    cxxopts::cxxopts)<br></code></pre></td></tr></table></figure>
+
+<p>执行 <code>vcpkg install</code> 安装依赖库, 此时工程有以下文件:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">├── CMakeLists.txt<br>├── build<br>├── main.cxx<br>├── vcpkg-configuration.json<br>├── vcpkg.json<br>└── vcpkg_installed<br></code></pre></td></tr></table></figure>
+
+<p>至此, 可以对 main.cxx 正常引用三方库进行代码编写了, 执行下 <code>cmake --build build</code> 试试效果 😊😊</p>
+<h2 id="python-bindings"><a href="#python-bindings" class="headerlink" title="python bindings"></a>python bindings</h2><p>接下我们使用 cmake + vcpkg + <a target="_blank" rel="noopener" href="https://pybind11.readthedocs.io/en/stable/installing.html#include-with-vcpkg">pybinding11</a> 来实现 python native bindings 的实战案例, 源码参考: <a target="_blank" rel="noopener" href="https://github.com/oksep/cmake-begin/tree/master/python_binding">python-binding</a></p>
+<p>同样配置 vcpkg.json 的依赖项:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>    <span class="hljs-attr">&quot;dependencies&quot;</span>: [<br>      <span class="hljs-string">&quot;pybind11&quot;</span><br>    ]<br>  &#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后使用 <code>vcpkg install</code> 安装依赖库</p>
+<p>在 CMakeFileLists.txt 中配置(重点参考注释):</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><br><span class="hljs-comment"># 配置 cmake tookchain</span><br><span class="hljs-keyword">set</span>(<br>    CMAKE_TOOLCHAIN_FILE <span class="hljs-string">&quot;$ENV&#123;VCPKG_ROOT&#125;/scripts/buildsystems/vcpkg.cmake&quot;</span><br>    CACHE <span class="hljs-keyword">STRING</span> <span class="hljs-string">&quot;Vcpkg toolchain file&quot;</span><br>)<br><br><span class="hljs-keyword">project</span>(example LANGUAGES CXX)<br><br><span class="hljs-keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="hljs-variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)<br><br><span class="hljs-comment"># 查找 pybind11 库</span><br><span class="hljs-keyword">find_package</span>(pybind11 REQUIRED)<br><br><span class="hljs-comment"># 配置头文件</span><br><span class="hljs-keyword">include_directories</span>($pybind11_INCLUDE_DIRS)<br><br><span class="hljs-comment"># pybind11_add_module 是找到 pybind11 后 pybind11Config.cmake 所定义的函数, 在这里配置源文件和输出模块</span><br>pybind11_add_module(example example.cpp)<br></code></pre></td></tr></table></figure>
+
+<p>在 <em>example.cpp</em> 中定义向 python 提供的 <code>add()</code> 方法, 声明模块宏 <code>PYBIND11_MODULE(example, m)</code>: </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;pybind11/pybind11.h&gt;</span></span><br><br><span class="hljs-keyword">namespace</span> py = pybind11;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-keyword">int</span> i, <span class="hljs-keyword">int</span> j)</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> i + j;<br>&#125;<br><br><span class="hljs-built_in">PYBIND11_MODULE</span>(example, m) &#123;<br>    m.<span class="hljs-built_in">def</span>(<span class="hljs-string">&quot;add&quot;</span>, &amp;add, <span class="hljs-string">&quot;A function which adds two numbers&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>执行构建 <code>cmake . -B build &amp;&amp; cmake --build build</code>, 然后进入到 lib 目录, 可以看到生成了对应的 native 库: <strong>example.cpython-311-darwin.so</strong> </p>
+<p>执行 python 解释器, 可以看到成功调用到了 navive 库 <code>add()</code> 方法并返回计算结果:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">/lib &gt; python                                                                                        py base <span class="hljs-number">21</span>:<span class="hljs-number">58</span>:<span class="hljs-number">59</span><br>Python <span class="hljs-number">3.11</span><span class="hljs-number">.5</span> (main, Sep <span class="hljs-number">11</span> <span class="hljs-number">2023</span>, 08:<span class="hljs-number">31</span>:<span class="hljs-number">25</span>) [Clang <span class="hljs-number">14.0</span><span class="hljs-number">.6</span> ] on darwin<br><span class="hljs-type">Type</span> <span class="hljs-string">&quot;help&quot;</span>, <span class="hljs-string">&quot;copyright&quot;</span>, <span class="hljs-string">&quot;credits&quot;</span> <span class="hljs-keyword">or</span> <span class="hljs-string">&quot;license&quot;</span> <span class="hljs-keyword">for</span> more information.<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> example<br>&gt;&gt;&gt;<br><span class="hljs-meta">&gt;&gt;&gt; </span>example.add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)<br><span class="hljs-number">3</span><br>&gt;&gt;&gt;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/cmake/" class="print-no-link">#cmake</a>
+      
+        <a href="/tags/ninja/" class="print-no-link">#ninja</a>
+      
+        <a href="/tags/vcpkg/" class="print-no-link">#vcpkg</a>
+      
+    </div>
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/cmake-complie-opencv-on-mac/" title="MacOS 上编译安装 OpenCV 的来龙去脉">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">MacOS 上编译安装 OpenCV 的来龙去脉</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/fourier-getting-started/" title="惊人的傅立叶变换">
+                        <span class="hidden-mobile">惊人的傅立叶变换</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://cdn.staticfile.org/waline/2.15.5/waline.min.css')
+      Fluid.utils.createScript('https://cdn.staticfile.org/waline/2.15.5/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://vercel-blog-comment-sandy.vercel.app","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/scripts/sakura_less.js"></script><!-- hexo injector body_end end --></body>
+</html>

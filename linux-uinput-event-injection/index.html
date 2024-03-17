@@ -1,0 +1,814 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/favicon-32x32.png">
+  <link rel="icon" href="/favicon/favicon-32x32.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#13323c">
+  <meta name="author" content="Sep">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="初识 Linux 中 uinput 模块">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UINPUT 事件注入">
+<meta property="og:url" content="https://blog.septenary.cn/linux-uinput-event-injection/index.html">
+<meta property="og:site_name" content="Sep&#39;s blog">
+<meta property="og:description" content="初识 Linux 中 uinput 模块">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-01-16T14:08:12.000Z">
+<meta property="article:modified_time" content="2024-03-17T07:47:39.047Z">
+<meta property="article:author" content="Sep">
+<meta property="article:tag" content="uinput">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>UINPUT 事件注入 ✍️ Sep&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.septenary.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":10,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#00bfa6","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"shell"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"ba4b70fc46a41b92c211dabf83df845c","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"KY2xelIyRT9MVrxAcB4hScJS-MdYXbMMI","app_key":"Tys2qvQf5WYXnV1GiOWsOBis","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ba4b70fc46a41b92c211dabf83df845c";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><script src="/scripts/hexo_resize_image.js"></script><!-- hexo injector body_begin end -->
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>📚 Sep&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn/assets/resume_en_2024.pdf" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Sep</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UINPUT 事件注入"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2016-01-16 14:08" pubdate>
+          2016年1月16日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">UINPUT 事件注入</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>uinput</strong> 是 <strong>Linux Kernel</strong> 的一个模块，是向用户层提供输入接口的子系统。我们可以通过 <strong>uinput</strong> 在 <em>/dev/input/</em> 中创建一个虚拟字符设备并注入事件。本文主要讲解如何使用 <strong>uinput</strong> 实现键盘事件的注入。</p>
+<h2 id="创建设备"><a href="#创建设备" class="headerlink" title="创建设备"></a>创建设备</h2><p>1.<strong>uinput</strong> 通常位于 <em>/dev/uinput</em> 或者 <em>/dev/input/uinput</em> ，终端执行 <code>adb shell ls -al /dev/uinput</code> ，可以看到 </p>
+<blockquote>
+<p>crw-rw—- system  system  10, 223 1970-01-01 08:00 uinput</p>
+</blockquote>
+<p>该文件为系统权限的字符设备，作为一个普通应用程序没有办法访问，所以在访问 <strong>uinput</strong> 之前，先要提权。终端执行 <code>adb shell su &amp;&amp; chmod 666 /dev/uinput</code> 更改字符设备的访问权限，再次执行 <code>adb shell ls -al /dev/uinput</code> 可以看到</p>
+<blockquote>
+<p>crw-rw-rw- system  system  10, 223 1970-01-01 08:00 uinput</p>
+</blockquote>
+<span id="more"></span>
+
+<p>2.提权后便可以使用 <strong>uinput</strong> 了，以 <strong>只读</strong> 和 <strong>非阻塞</strong> 模式打开它</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;linux/input.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;linux/uinput.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br>...<br><br><span class="hljs-keyword">int</span> fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;/dev/uinput&quot;</span>, O_WRONLY | O_NONBLOCK);<br><span class="hljs-keyword">if</span> (fd &lt; <span class="hljs-number">0</span>) &#123;<br>    fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;/dev/input/uinput&quot;</span>, O_WRONLY | O_NONBLOCK);<br>    <span class="hljs-keyword">if</span> (fd &lt; <span class="hljs-number">0</span>) &#123;<br>        ...<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>3.打开后需要配置 <strong>uinput</strong> 哪些类型的输入事件会用到，这些事件定义在 <strong>linux/input.h</strong> 文件中</p>
+<table>
+<thead>
+<tr>
+<th align="left">宏</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">define EV_SYN 0x00</td>
+<td align="left">同步事件</td>
+</tr>
+<tr>
+<td align="left">define EV_KEY 0x01</td>
+<td align="left">键盘按下和释放事件</td>
+</tr>
+<tr>
+<td align="left">define EV_REL 0x02</td>
+<td align="left">相对坐标事件</td>
+</tr>
+<tr>
+<td align="left">define EV_ABS 0x03</td>
+<td align="left">绝对坐标事件</td>
+</tr>
+</tbody></table>
+<p>对于键盘事件，进行如下配置（允许发送 key 和 syn 两种类型的事件）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">ret = <span class="hljs-built_in">ioctl</span>(fd, UI_SET_EVBIT, EV_KEY);<br>ret = <span class="hljs-built_in">ioctl</span>(fd, UI_SET_EVBIT, EV_SYN);<br></code></pre></td></tr></table></figure>
+
+<p>配置哪些按键可以输入（上下左右方向键）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 允许输入方向键上、下、左、右</span><br>ret = <span class="hljs-built_in">ioctl</span>(fd, UI_SET_KEYBIT, KEY_UP);<br>ret = <span class="hljs-built_in">ioctl</span>(fd, UI_SET_KEYBIT, KEY_DOWN);<br>ret = <span class="hljs-built_in">ioctl</span>(fd, UI_SET_KEYBIT, KEY_LEFT);<br>ret = <span class="hljs-built_in">ioctl</span>(fd, UI_SET_KEYBIT, KEY_RIGHT);<br></code></pre></td></tr></table></figure>
+
+<p>4.上面已经配置了一些基本特性，接下来介绍结构体 <code>uinput_user_dev </code>，它定义在 <strong>linux/uinput.h</strong> 头文件中</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> UINPUT_MAX_NAME_SIZE 80</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">uinput_user_dev</span> &#123;</span><br>    <span class="hljs-keyword">char</span> name[UINPUT_MAX_NAME_SIZE];<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">input_id</span> <span class="hljs-title">id</span>;</span><br>        <span class="hljs-keyword">int</span> ff_effects_max;<br>        <span class="hljs-keyword">int</span> absmax[ABS_MAX + <span class="hljs-number">1</span>];<br>        <span class="hljs-keyword">int</span> absmin[ABS_MAX + <span class="hljs-number">1</span>];<br>        <span class="hljs-keyword">int</span> absfuzz[ABS_MAX + <span class="hljs-number">1</span>];<br>        <span class="hljs-keyword">int</span> absflat[ABS_MAX + <span class="hljs-number">1</span>];<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>其中有几个比较重要的字段:</p>
+<ul>
+<li>name 要创建的虚拟设备名称</li>
+<li>id 内部结构体，描述设备的 usb 类型，厂商，产品，版本</li>
+<li>absmin and absmax 整型数组，描述鼠标或触屏事件的阈值</li>
+</ul>
+<p>将虚拟设备的信息写入 <code>fd</code> ，虚拟设备命名为 <strong>uinput-sample</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">uinput_user_dev</span> <span class="hljs-title">dev</span>;</span><br><br><span class="hljs-built_in">memset</span>(&amp;dev, <span class="hljs-number">0</span>, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(dev));<br><span class="hljs-built_in">snprintf</span>(dev.name, UINPUT_MAX_NAME_SIZE, <span class="hljs-string">&quot;uinput-sample&quot;</span>); <span class="hljs-comment">// 虚拟设备名称</span><br>dev.id.bustype = BUS_USB; <span class="hljs-comment">// udb 类型</span><br>dev.id.vendor = <span class="hljs-number">0x1</span>;<br>dev.id.product = <span class="hljs-number">0x1</span>;<br>dev.id.version = <span class="hljs-number">1</span>;<br><br><span class="hljs-built_in">write</span>(fd, &amp;dev, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(dev)); <span class="hljs-comment">// 写入</span><br></code></pre></td></tr></table></figure>
+
+<p>5.最后，创建配置好的虚拟设备</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">ret = <span class="hljs-built_in">ioctl</span>(fd, UI_DEV_CREATE)<br></code></pre></td></tr></table></figure>
+<p>终端执行 <code>adb shell getevent</code> 你会看到虚拟设备 <strong>uinput-sample</strong> 已经创建成功:  <strong>/dev/input/event1</strong></p>
+<blockquote>
+<p>add device 1: /dev/input/event1<br>  name:     “uinput-sample” </p>
+<p>add device 2: /dev/input/event6<br>  name:     “eventserver-Joystick”</p>
+<p>add device 3: /dev/input/event5<br>  name:     “eventserver-Mouse”</p>
+<p>add device 4: /dev/input/event0<br>  name:     “aml_keypad”</p>
+</blockquote>
+<hr>
+<h2 id="事件注入"><a href="#事件注入" class="headerlink" title="事件注入"></a>事件注入</h2><p>创建好了设备，开始注入事件，这里还需介绍一个结构体 <code>input_event</code> ，它定义在 <strong>linux/input.h</strong> 中，其中几个重要的字段：</p>
+<ul>
+<li><code>type</code>:  event 的类型 (EV_KEY, EV_ABS, EV_REL, …),</li>
+<li><code>code</code>:  如果 type 是 EV_KEY 类型，则是 key code；若type是 EV_ABS 或者 EV_REL 类型，则是 x、y轴</li>
+<li><code>value</code>:   如果 type 是 EV_KEY 类型，则 1 (press) 0 (release)；若type是 EV_ABS 或者 EV_REL 类型，则为 x，y 坐标</li>
+</ul>
+<p>声明写入事件的方法</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">writeEvent</span><span class="hljs-params">(<span class="hljs-keyword">int</span> fd,<span class="hljs-keyword">int</span> type,<span class="hljs-keyword">int</span> code,<span class="hljs-keyword">int</span> value)</span></span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">input_event</span> <span class="hljs-title">ev</span>;</span><br>    <span class="hljs-built_in">memset</span>(&amp;ev, <span class="hljs-number">0</span>, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(ev));<br>    ev.type = type;<br>    ev.code = code;<br>    ev.value = value;<br>    <span class="hljs-keyword">ssize_t</span> bytes;<span class="hljs-comment">// 写入文档的字节数（成功）；-1（出错）</span><br>    bytes = <span class="hljs-built_in">write</span>(fd, &amp;ev, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(struct input_event));<br>    <span class="hljs-keyword">return</span> (<span class="hljs-keyword">int</span>) bytes;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>写入一个键盘方向键事件  <strong>KEY_UP</strong> </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">writeEvent</span>(fd,EV_KEY,KEY_UP,<span class="hljs-number">1</span>) <span class="hljs-comment">// KEY_UP press</span><br><span class="hljs-built_in">writeEvent</span>(fd,EV_KEY,KEY_UP,<span class="hljs-number">0</span>) <span class="hljs-comment">// KEY_UP release</span><br></code></pre></td></tr></table></figure>
+
+<p>将写入的事件同步到虚拟设备</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">writeEvent</span>(fd,EV_SYN,SYN_REPORT,<span class="hljs-number">0</span>)<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="销毁设备"><a href="#销毁设备" class="headerlink" title="销毁设备"></a>销毁设备</h2><p>注入了事件之后需要销毁虚拟设备，调用下面的函数，再次执行 <code>adb shell getevent</code> 你会看到设备已被移除</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">destroy</span><span class="hljs-params">(<span class="hljs-keyword">int</span> fd)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (fd != <span class="hljs-number">-1</span>) &#123;<br>        <span class="hljs-keyword">int</span> ret = <span class="hljs-built_in">ioctl</span>(fd, UI_DEV_DESTROY);<br>        <span class="hljs-keyword">return</span> ret;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>实现 uinput 事件注入步骤就是：<strong>创建虚拟设备-&gt;注入事件-&gt;销毁设备</strong>，上文只是介绍了键盘事件的注入，其实也可以注入鼠标事件，触摸事件等，接下来的文章会介绍到，请大家多多关注。</p>
+<p><strong>参考：</strong><br><a target="_blank" rel="noopener" href="https://source.android.com/devices/input/input-device-configuration-files.html">https://source.android.com/devices/input/input-device-configuration-files.html</a><br><a target="_blank" rel="noopener" href="http://thiemonge.org/getting-started-with-uinput">http://thiemonge.org/getting-started-with-uinput</a><br><a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/input/multi-touch-protocol.txt">https://www.kernel.org/doc/Documentation/input/multi-touch-protocol.txt</a><br><a target="_blank" rel="noopener" href="http://bitmath.org/code/mtdev/">http://bitmath.org/code/mtdev/</a><br><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/4386449/send-touch-event-from-adb-to-a-device">http://stackoverflow.com/questions/4386449/send-touch-event-from-adb-to-a-device</a><br><a target="_blank" rel="noopener" href="http://blog.csdn.net/droidphone/article/details/8434768">http://blog.csdn.net/droidphone/article/details/8434768</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Android/" class="category-chain-item">Android</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/uinput/" class="print-no-link">#uinput</a>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/dao-and-shu/" title="道与术">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">道与术</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/android-queue-message/" title="Android 异步处理队列消息分析">
+                        <span class="hidden-mobile">Android 异步处理队列消息分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://cdn.staticfile.org/waline/2.15.5/waline.min.css')
+      Fluid.utils.createScript('https://cdn.staticfile.org/waline/2.15.5/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://vercel-blog-comment-sandy.vercel.app","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/scripts/sakura_less.js"></script><!-- hexo injector body_end end --></body>
+</html>

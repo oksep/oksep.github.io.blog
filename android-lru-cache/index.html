@@ -1,0 +1,781 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/favicon-32x32.png">
+  <link rel="icon" href="/favicon/favicon-32x32.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#13323c">
+  <meta name="author" content="Sep">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="LRU算法是一种很常用的内存管理方式，为实现该算法，有两方面要做：  实现最近使用：可以用链表完成，在使用链表时将最近索引到的元素从当前位置移除然后放置在链表头部，这样最久未使用的就被逐渐移到了链表尾部  实现快速检索:想要快速的检索到对应元素可以 通过哈希表完成,通过key值查找到对应的value   其实 JDK 中强大的 Collection 已经向我们提供了 LinkedHashMap 满">
+<meta property="og:type" content="article">
+<meta property="og:title" content="再谈LruCache">
+<meta property="og:url" content="https://blog.septenary.cn/android-lru-cache/index.html">
+<meta property="og:site_name" content="Sep&#39;s blog">
+<meta property="og:description" content="LRU算法是一种很常用的内存管理方式，为实现该算法，有两方面要做：  实现最近使用：可以用链表完成，在使用链表时将最近索引到的元素从当前位置移除然后放置在链表头部，这样最久未使用的就被逐渐移到了链表尾部  实现快速检索:想要快速的检索到对应元素可以 通过哈希表完成,通过key值查找到对应的value   其实 JDK 中强大的 Collection 已经向我们提供了 LinkedHashMap 满">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-06-08T12:00:00.000Z">
+<meta property="article:modified_time" content="2024-03-17T07:47:39.043Z">
+<meta property="article:author" content="Sep">
+<meta property="article:tag" content="LruCache">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>再谈LruCache ✍️ Sep&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.septenary.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":10,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#00bfa6","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"shell"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"ba4b70fc46a41b92c211dabf83df845c","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"KY2xelIyRT9MVrxAcB4hScJS-MdYXbMMI","app_key":"Tys2qvQf5WYXnV1GiOWsOBis","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ba4b70fc46a41b92c211dabf83df845c";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><script src="/scripts/hexo_resize_image.js"></script><!-- hexo injector body_begin end -->
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>📚 Sep&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn/assets/resume_en_2024.pdf" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Sep</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="再谈LruCache"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2015-06-08 12:00" pubdate>
+          2015年6月8日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">再谈LruCache</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>LRU</strong>算法是一种很常用的内存管理方式，为实现该算法，有两方面要做：</p>
+<ol>
+<li><p><strong>实现最近使用：</strong><br>可以用链表完成，在使用链表时将最近索引到的元素从当前位置移除然后放置在链表头部，这样最久未使用的就被逐渐移到了链表尾部</p>
+</li>
+<li><p><strong>实现快速检索:</strong><br>想要快速的检索到对应元素可以 通过哈希表完成,通过key值查找到对应的value</p>
+</li>
+</ol>
+<p>其实 JDK 中强大的 <strong>Collection</strong> 已经向我们提供了 <code>LinkedHashMap</code> 满足以上两种需求。</p>
+<span id="more"></span>
+
+<h3 id="LruCache-的使用"><a href="#LruCache-的使用" class="headerlink" title="LruCache 的使用"></a>LruCache 的使用</h3><p>Anroid中对内存的管理，在早期有一种较为常见的缓存实现，用 <strong>软引用</strong> 或 <strong>弱引用</strong> (  <code>SoftReference</code> or <code>WeakReference</code> )存储在 <code>Map</code> 中，然而在 <strong>API 9</strong> 之后，<strong>Dalvik</strong> 的内存回收机制做了改变，非强引用的对象很容易被GC清理。</p>
+<p><code>LruCache</code> 则顺势而生，它的使用场景大部分都是缓存 <code>Bimtap</code> 时用到的，（用以保证内存合理、有效的使用），下面是 <code>LruCache</code> 的简单使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 初始化LruCache</span><br><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initCache</span><span class="hljs-params">(Context context)</span> </span>&#123;<br>    <span class="hljs-comment">// 系统可用内存的1/4</span><br>    <span class="hljs-keyword">int</span> memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();<br>    <span class="hljs-keyword">int</span> cacheSize = <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span> * memClass / <span class="hljs-number">4</span>;<br>    mCache = <span class="hljs-keyword">new</span> LruCache&lt;String, Bitmap&gt;(cacheSize) &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">int</span> <span class="hljs-title">sizeOf</span><span class="hljs-params">(String key, Bitmap value)</span> </span>&#123;<br>            <span class="hljs-comment">// 一张位图所占内存大小</span><br>            <span class="hljs-keyword">return</span> value.getRowBytes() * value.getHeight();<br>        &#125;<br>        <br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">entryRemoved</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> evicted, String key, Bitmap oldValue, Bitmap newValue)</span> </span>&#123;<br>        <span class="hljs-keyword">super</span>.entryRemoved(evicted, key, oldValue, newValue);<br>        <span class="hljs-comment">// 回收最久未使用的bitmap</span><br>        <span class="hljs-keyword">if</span> (oldValue != <span class="hljs-keyword">null</span>) &#123;<br>            oldValue.recycle();<br>        &#125; <br>    &#125;<br>&#125;<br><br><span class="hljs-comment">//存放数据</span><br><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">putBitmap</span><span class="hljs-params">(String key,Bitmap bmp)</span></span>&#123;<br>    mCache.put(key,bitmap);<br>&#125;<br><span class="hljs-comment">//访问</span><br><span class="hljs-function"><span class="hljs-keyword">private</span> Bitmap <span class="hljs-title">getBitmap</span><span class="hljs-params">(String key)</span></span>&#123;<br>    Bitmap bmp = mCache.get(key);<br>    <span class="hljs-keyword">return</span> bmp;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="LrcCache-简单分析"><a href="#LrcCache-简单分析" class="headerlink" title="LrcCache 简单分析"></a>LrcCache 简单分析</h3><p>接下来介绍下 <code>LruCache</code> 的几段重要代码<br><code>LruCache</code> 的构造器:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">LruCache</span><span class="hljs-params">(<span class="hljs-keyword">int</span> maxSize)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (maxSize &lt;= <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalArgumentException(<span class="hljs-string">&quot;maxSize &lt;= 0&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">this</span>.maxSize = maxSize;<br>    <span class="hljs-comment">// 初始化一个LinkedHashMap实例，所有元素都存在这个map中</span><br>    <span class="hljs-keyword">this</span>.map = <span class="hljs-keyword">new</span> LinkedHashMap&lt;K, V&gt;(<span class="hljs-number">0</span>, <span class="hljs-number">0.75f</span>, <span class="hljs-keyword">true</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>构造器中实际上初始化了一个 <code>LinkedHashMap</code> ，接下来所有元素操作(存储和索引)都是基于该 map 进行的</p>
+<p>我们再来看下LruCache的</p>
+<ul>
+<li> get方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> V <span class="hljs-title">get</span><span class="hljs-params">(K key)</span> </span>&#123;<br>    ......<br>    V mapValue;<br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) &#123;<br>        <span class="hljs-comment">// 从map中获取元素   </span><br>        mapValue = map.get(key);<br>        <span class="hljs-keyword">if</span> (mapValue != <span class="hljs-keyword">null</span>) &#123;<br>            hitCount++;<br>            <span class="hljs-keyword">return</span> mapValue;<br>        &#125;<br>         missCount++;<br>    &#125;<br>    <span class="hljs-comment">// 未命中尝试创建一个value</span><br>    V createdValue = create(key);<br>    ......<br>    <span class="hljs-comment">// 添加到map中</span><br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) &#123;<br>            createCount++;<br>            mapValue = map.put(key, createdValue);<br>            ......<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>put方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> V <span class="hljs-title">put</span><span class="hljs-params">(K key, V value)</span> </span>&#123;<br>    ......<br>    V previous;<br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) &#123;<br>        putCount++;<br>        size += safeSizeOf(key, value);<br>        previous = map.put(key, value);<br>        <span class="hljs-keyword">if</span> (previous != <span class="hljs-keyword">null</span>) &#123;<br>            size -= safeSizeOf(key, previous);<br>        &#125;<br>    &#125;<br>    .....<br>    <span class="hljs-comment">// 重新计算内存占用情况</span><br>    trimToSize(maxSize);<br>    <span class="hljs-keyword">return</span> previous;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p> 其中<code>trimToSize(maxSize) </code>这个方法实现了内存大小的控制</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 重新计算集合元素大小</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">trimToSize</span><span class="hljs-params">(<span class="hljs-keyword">int</span> maxSize)</span> </span>&#123;<br>    <span class="hljs-keyword">while</span> (<span class="hljs-keyword">true</span>) &#123;<br>        K key;<br>        V value;<br>        <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) &#123;<br>            ......<br>            <span class="hljs-comment">// 从map中取得最久未被使用的元素</span><br>            Map.Entry&lt;K, V&gt; toEvict = map.eldest();<br>            ......<br>            key = toEvict.getKey();<br>            <span class="hljs-comment">//从map中移除，并重新计算总大小，直到小余maxSize为止</span><br>            map.remove(key);<br>            size -= safeSizeOf(key, value);<br>            ......<br>            &#125;<br>        &#125;<br>    &#125; <br></code></pre></td></tr></table></figure>
+<p>那么问题来了，为什么 执行 <code>get</code> 的时候 <strong>map</strong> 中的元素就被重新排列了， <strong>eldest</strong> 元素又是如何给出的呢， 原因都在 <code>LinkedHashMap</code> </p>
+<h3 id="LruCache-的发动机"><a href="#LruCache-的发动机" class="headerlink" title="LruCache 的发动机"></a>LruCache 的发动机</h3><p><code>LinkedHashMap</code> 实现了 <strong>LRU算法</strong> ， 它是在 <code>LruCache</code> 的构造器中初始化的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">this</span>.map = <span class="hljs-keyword">new</span> LinkedHashMap&lt;K, V&gt;(<span class="hljs-number">0</span>, <span class="hljs-number">0.75f</span>, <span class="hljs-keyword">true</span>);<br></code></pre></td></tr></table></figure>
+<p>所有数据都存储在这个 <strong>map</strong> 中<br>注意初始化  <code>LinkedHashMap</code> 的第三个参数 <code>accessOrder</code> </p>
+<ul>
+<li><em>true</em>  随机访问重新排序</li>
+<li><em>false</em>  插入元素时重新排序</li>
+</ul>
+<p>它决定了如何 控制 <strong>map</strong> 的 <strong>ordering</strong></p>
+<p>在来看下LinkedHashMap的源码，其中声明了一个常量 <strong>header</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java">/ **<br>* A dummy entry in the circular linked list of entries in the map.<br>* The first real entry is header.nxt, and the last is header.prv.<br>* If the map is empty, header.nxt == header &amp;&amp; header.prv == header.<br>*/<br><span class="hljs-keyword">transient</span> LinkedEntry&lt;K, V&gt; header;<br></code></pre></td></tr></table></figure>
+
+<p>这个header记录了链表的首位元素</p>
+<p>我们看下对 <strong>map</strong> 进行操作的几个方法</p>
+<ul>
+<li>添加元素时，<strong>relink</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span> <br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">addNewEntry</span><span class="hljs-params">(K key, V value, <span class="hljs-keyword">int</span> hash, <span class="hljs-keyword">int</span> index)</span> </span>&#123;<br>        LinkedEntry&lt;K, V&gt; header = <span class="hljs-keyword">this</span>.header;<br>        ...<br>        <span class="hljs-comment">// 对header首尾元素的指针重新指向</span><br>        LinkedEntry&lt;K, V&gt; oldTail = header.prv;<br>        LinkedEntry&lt;K, V&gt; newTail = <span class="hljs-keyword">new</span> LinkedEntry&lt;K,V&gt;(<br>                key, value, hash, table[index], header, oldTail);<br>        table[index] = oldTail.nxt = header.prv = newTail;<br>&#125;<br></code></pre></td></tr></table></figure>
+<ul>
+<li>删除元素时，<strong>relink</strong><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span> <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">postRemove</span><span class="hljs-params">(HashMapEntry&lt;K, V&gt; e)</span> </span>&#123;<br>        <span class="hljs-comment">// 对header首尾元素的指针重新指向</span><br>        LinkedEntry&lt;K, V&gt; le = (LinkedEntry&lt;K, V&gt;) e;<br>        le.prv.nxt = le.nxt;<br>        le.nxt.prv = le.prv;<br>        le.nxt = le.prv = <span class="hljs-keyword">null</span>; <span class="hljs-comment">// Help the GC (for performance)</span><br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>访问元素, <code>accessOrder</code> 判断是否调用 <code>makeTail()</code> 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span> <span class="hljs-function"><span class="hljs-keyword">public</span> V <span class="hljs-title">get</span><span class="hljs-params">(Object key)</span> </span>&#123;<br>        ...<br>        <span class="hljs-keyword">int</span> hash = secondaryHash(key);<br>        HashMapEntry&lt;K, V&gt;[] tab = table;<br>        <span class="hljs-keyword">for</span> (HashMapEntry&lt;K, V&gt; e = tab[hash &amp; (tab.length - <span class="hljs-number">1</span>)];<br>                e != <span class="hljs-keyword">null</span>; e = e.next) &#123;<br>            K eKey = e.key;<br>            <span class="hljs-keyword">if</span> (eKey == key || (e.hash == hash &amp;&amp; key.equals(eKey))) &#123;<br>                <span class="hljs-keyword">if</span> (accessOrder)<br>                    makeTail((LinkedEntry&lt;K, V&gt;) e);<br>                <span class="hljs-keyword">return</span> e.value;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>就是这个 <code>makeTail()</code> 方法控制了从 <strong>map</strong> 中访问数据时 <code>header</code> 的指针 被重置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span> <span class="hljs-function"><span class="hljs-keyword">public</span> V <span class="hljs-title">get</span><span class="hljs-params">(Object key)</span> </span>&#123;<br>/ **<br>  * Relinks the given entry to the tail of the list. Under access ordering,<br>  * <span class="hljs-keyword">this</span> method is invoked whenever the value of a  pre-existing entry is<br>  * read by Map.get or modified by Map.put.<br>  */<br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">makeTail</span><span class="hljs-params">(LinkedEntry&lt;K, V&gt; e)</span> </span>&#123;<br>        <span class="hljs-comment">// Unlink e</span><br>        e.prv.nxt = e.nxt;<br>        e.nxt.prv = e.prv;<br>        <span class="hljs-comment">// Relink e as tail</span><br>        LinkedEntry&lt;K, V&gt; header = <span class="hljs-keyword">this</span>.header;<br>        LinkedEntry&lt;K, V&gt; oldTail = header.prv;<br>        e.nxt = header;<br>        e.prv = oldTail;<br>        oldTail.nxt = header.prv = e;<br>        modCount++;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>对 <strong>map</strong> 的所有操作都会改变 <code>header</code> 的指针，这样我们就可以知道 <strong>eldest</strong> 的那个元素是谁了, 这也证明了 <code>LruCache</code> 的 <strong>LRU</strong> 算法实现 由 <code>LinkedHashMap</code> 完成</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Android/" class="category-chain-item">Android</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LruCache/" class="print-no-link">#LruCache</a>
+      
+    </div>
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/shell-learning/" title="Shell Script初级编程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Shell Script初级编程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/android-on-click-xml/" title="android:onClick 怎样做到监听点击事件的">
+                        <span class="hidden-mobile">android:onClick 怎样做到监听点击事件的</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://cdn.staticfile.org/waline/2.15.5/waline.min.css')
+      Fluid.utils.createScript('https://cdn.staticfile.org/waline/2.15.5/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://vercel-blog-comment-sandy.vercel.app","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/scripts/sakura_less.js"></script><!-- hexo injector body_end end --></body>
+</html>

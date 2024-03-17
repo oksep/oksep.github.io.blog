@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/favicon-32x32.png">
+  <link rel="icon" href="/favicon/favicon-32x32.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#13323c">
+  <meta name="author" content="Sep">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="这里简单整理了下在小组分享的 ReactNative 入门知识点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ReactNative Tutorial">
+<meta property="og:url" content="https://blog.septenary.cn/react-native-tutorial/index.html">
+<meta property="og:site_name" content="Sep&#39;s blog">
+<meta property="og:description" content="这里简单整理了下在小组分享的 ReactNative 入门知识点">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15135035648483.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138721832230.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138754176654.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138869293237.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138857931917.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138868113330.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138870589984.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138880360088.jpg">
+<meta property="article:published_time" content="2017-12-25T12:00:00.000Z">
+<meta property="article:modified_time" content="2024-03-17T07:47:39.047Z">
+<meta property="article:author" content="Sep">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15135035648483.jpg">
+  
+  
+  
+  <title>ReactNative Tutorial ✍️ Sep&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.septenary.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":10,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#00bfa6","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"shell"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"ba4b70fc46a41b92c211dabf83df845c","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"KY2xelIyRT9MVrxAcB4hScJS-MdYXbMMI","app_key":"Tys2qvQf5WYXnV1GiOWsOBis","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ba4b70fc46a41b92c211dabf83df845c";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><script src="/scripts/hexo_resize_image.js"></script><!-- hexo injector body_begin end -->
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>📚 Sep&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn/assets/resume_en_2024.pdf" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Sep</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ReactNative Tutorial"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2017-12-25 12:00" pubdate>
+          2017年12月25日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ReactNative Tutorial</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="ReactNative-Tutorial"><a href="#ReactNative-Tutorial" class="headerlink" title="ReactNative Tutorial"></a>ReactNative Tutorial</h1><h2 id="Getting-Started"><a href="#Getting-Started" class="headerlink" title="Getting Started"></a>Getting Started</h2><h3 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h3><p>1.<strong>nodejs</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew install node<br></code></pre></td></tr></table></figure>
+
+<p>2.<strong>npm4</strong>  <a target="_blank" rel="noopener" href="https://github.com/facebook/react-native/issues/14767">why not npm5?</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">npm install -g npm@4<br></code></pre></td></tr></table></figure>
+
+<p>3.<strong>yarn</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew install yarn<br></code></pre></td></tr></table></figure>
+
+<p>4.<strong>watchman</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew install watchman<br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/16432071/how-to-fix-homebrew-permissions/16450503">watchman permission</a> : <code>sudo chown -R $(whoami) $(brew --prefix)/*</code></p>
+<p>5.<strong>react-native-cli</strong>  or  <del>create-react-native-app</del></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">npm install -g react-native-cli<br></code></pre></td></tr></table></figure>
+
+<h3 id="Run-it"><a href="#Run-it" class="headerlink" title="Run it"></a>Run it</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">react-native init ReactNativeTutorial<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">react-native run-ios<br>react-native run-android<br></code></pre></td></tr></table></figure>
+
+<p><strong>Android issue</strong></p>
+<ul>
+<li>./android/gradle/wrapper/gradle-wrapper.properties</li>
+<li>./android/build.gradle</li>
+<li>./android/app/build.gradle</li>
+<li>./android/local.properties</li>
+<li>touch ~/.gradle/gradle.properties &amp;&amp; echo “org.gradle.daemon=true” &gt;&gt; ~/.gradle/gradle.properties</li>
+</ul>
+<p><strong>iOS issue</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/39778607/error-running-react-native-app-from-terminal-ios">xcrun: error</a> :  <em>Xcode/Setting/Location</em> -&gt; Command Line Tools</li>
+</ul>
+<h3 id="Developer-Menu"><a href="#Developer-Menu" class="headerlink" title="Developer Menu"></a>Developer Menu</h3><h3 id="How-it-works"><a href="#How-it-works" class="headerlink" title="How it works"></a>How it works</h3><p><img src="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15135035648483.jpg" srcset="/img/loading.gif" lazyload></p>
+<h2 id="ES6-标准"><a href="#ES6-标准" class="headerlink" title="ES6 标准"></a>ES6 标准</h2><p><a target="_blank" rel="noopener" href="http://es6.ruanyifeng.com/">参考-1</a><br><a target="_blank" rel="noopener" href="http://blog.kdchang.cc/2016/04/04/react-react-native-es5-es6-cheat-sheet">参考-2</a></p>
+<p> <strong>Modules</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;<br><span class="hljs-keyword">import</span> MyComponent <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./MyComponent&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123;parseData&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./xxx&#x27;</span>;<br><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> APIs <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../constants/ServerAPIs&#x27;</span>;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyComponent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Compoent</span> </span>&#123;<br>	<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseData</span>(<span class="hljs-params"></span>) </span>&#123;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>Classes &amp; Method</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Photo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-title">handleClick</span>(<span class="hljs-params">event</span>)</span> &#123;<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> &#123;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>Property initializers</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> &#123;<br>        <span class="hljs-keyword">return</span> (<br>            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Text</span>&gt;</span>Hello<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span></span><br>        );<br>    &#125;<br>&#125;<br>Todo.defaultProps = &#123;<br>    <span class="hljs-attr">checked</span>: <span class="hljs-literal">false</span>,<br>    <span class="hljs-attr">maxLength</span>: <span class="hljs-number">10</span>,<br>&#125;;<br>Todo.propTypes = &#123;<br>    <span class="hljs-attr">checked</span>: React.PropTypes.bool.isRequired,<br>    <span class="hljs-attr">maxLength</span>: React.PropTypes.number.isRequired,<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p><strong>State</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;<br>    state = &#123;<br>        <span class="hljs-attr">maxLength</span>: <span class="hljs-built_in">this</span>.props.maxLength,<br>    &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-title">constructor</span>(<span class="hljs-params">props</span>)</span>&#123;<br>        <span class="hljs-built_in">super</span>(props);<br>        <span class="hljs-built_in">this</span>.state = &#123;<br>            <span class="hljs-attr">maxLength</span>: <span class="hljs-built_in">this</span>.props.maxLength,<br>        &#125;;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>Arrow functions</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">TouchableOpacity</span> <span class="hljs-attr">onPress</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> console.log(&quot;Arrow function called&quot;) &#125;&#125;/&gt;</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>Dynamic property names &amp; template strings</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> name = <span class="hljs-string">&quot;Bob&quot;</span>, time = <span class="hljs-string">&quot;today&quot;</span>;<br><span class="hljs-keyword">let</span> msg = <span class="hljs-string">`Hello <span class="hljs-subst">$&#123;name&#125;</span>, how are you <span class="hljs-subst">$&#123;time&#125;</span>?`</span><br><br><span class="hljs-keyword">const</span> stateName = <span class="hljs-string">&quot;toggle&quot;</span><br><span class="hljs-built_in">this</span>.setState(&#123; [<span class="hljs-string">`<span class="hljs-subst">$&#123;stateName&#125;</span>Value`</span>]: <span class="hljs-literal">true</span> &#125;);<br></code></pre></td></tr></table></figure>
+
+<p><strong>Destructuring &amp; spread attributes</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>&#123;<br>  <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-keyword">var</span> &#123;<br>      className,<br>      ...others,  <span class="hljs-comment">// ...others 包含 this.props 除了 className 外所有值。this.props = &#123;value: &#x27;true&#x27;, title: &#x27;header&#x27;, className: &#x27;content&#x27;&#125;</span><br>    &#125; = <span class="hljs-built_in">this</span>.props;<br>    <span class="hljs-keyword">return</span> (<br>      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&#123;className&#125;</span>&gt;</span></span><br><span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">TodoList</span> &#123;<span class="hljs-attr">...others</span>&#125; /&gt;</span></span><br><span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;this.handleLoadMoreClick&#125;</span>&gt;</span>Load more<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>    );<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>Default Parameters</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">test</span>(<span class="hljs-params">height = <span class="hljs-number">50</span>, color = <span class="hljs-string">&#x27;red&#x27;</span></span>) </span>&#123;  <br>  ...  <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Component"><a href="#Component" class="headerlink" title="Component"></a>Component</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CustomComponent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>&#123;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="JSX"><a href="#JSX" class="headerlink" title="JSX"></a>JSX</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CustomComponent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> &#123;  <br>        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">View</span>&gt;</span></span><br><span class="xml">          <span class="hljs-tag">&lt;<span class="hljs-name">Text</span>&gt;</span>This is a title!<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span></span><br><span class="xml">          <span class="hljs-tag">&lt;<span class="hljs-name">View</span>&gt;</span></span><br><span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Text</span>&gt;</span>This is a Summary<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span></span><br><span class="xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">View</span>&gt;</span></span><br><span class="xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">View</span>&gt;</span></span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="props-amp-state"><a href="#props-amp-state" class="headerlink" title="props &amp; state"></a>props &amp; state</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><br><span class="hljs-comment">// 父组件</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ParentComponent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span></span>&#123;<br>    <span class="hljs-function"><span class="hljs-title">constructor</span>(<span class="hljs-params">props</span>)</span> &#123;<br>        <span class="hljs-built_in">super</span>(props)<br>        <span class="hljs-built_in">this</span>.state = &#123;<br>            childName = <span class="hljs-string">&quot;子组件&quot;</span><br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">return</span>(<br>            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ChildComponent</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&#123;this.state.childName&#125;</span>&gt;</span></span><br><span class="xml">        )</span><br><span class="xml">    &#125;</span><br><span class="xml">&#125;</span><br><span class="xml"></span><br><span class="xml">// 子组件</span><br><span class="xml">class ChildComponent extends Component&#123;</span><br><span class="xml">    render()&#123;</span><br><span class="xml">        return(</span><br><span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Text</span>&gt;</span>&#123;this.props.name&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span></span><br><span class="xml">        )</span><br><span class="xml">    &#125;</span><br><span class="xml">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="Lifecycle"><a href="#Lifecycle" class="headerlink" title="Lifecycle"></a>Lifecycle</h3><p><img src="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138721832230.jpg" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 组件开始装载之前调用，在一次生命周期中只会执行一次。</span><br>componentWillMount()<br><br><span class="hljs-comment">// 组件完成装载之后调用，在一次生命周期中只会执行一次，从这里开始就可以对组件进行各种操作了，比如在组件装载完成后要显示的时候执行动画。</span><br>componentDidMount()<br><br><span class="hljs-comment">// 组件属性更新之前调用，每一次属性更新都会调用</span><br>componentWillUpdate(object nextProps, object nextState)<br><br><br><span class="hljs-comment">// 组件属性更新之后调用，每次属性更新都会调用</span><br>componentDidUpdate(object prevProps, object prevState)<br><br><span class="hljs-comment">// 组件卸载之前调用</span><br>componentWillUnmount()<br></code></pre></td></tr></table></figure>
+
+<h3 id="Style-amp-FlexBox"><a href="#Style-amp-FlexBox" class="headerlink" title="Style &amp; FlexBox"></a>Style &amp; FlexBox</h3><p><img src="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138754176654.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="组件使用"><a href="#组件使用" class="headerlink" title="组件使用"></a>组件使用</h2><h3 id="Image"><a href="#Image" class="headerlink" title="Image"></a>Image</h3><p><strong>本地图片</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&lt;Image source=&#123;<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./assets/email.png&#x27;</span>)&#125;/&gt;<br></code></pre></td></tr></table></figure>
+
+<p>Packager 会打包所有的图片并且依据屏幕精度提供对应的资源。比如: <strong>iPhone 6</strong> 会使用 <a href="mailto:&#101;&#109;&#x61;&#x69;&#x6c;&#64;&#x32;&#120;&#46;&#112;&#x6e;&#x67;">&#101;&#109;&#x61;&#x69;&#x6c;&#64;&#x32;&#120;&#46;&#112;&#x6e;&#x67;</a>，而 <strong>Pixel</strong> 上则会使用 <a href="mailto:&#x65;&#x6d;&#97;&#x69;&#108;&#x40;&#x33;&#120;&#46;&#112;&#110;&#103;">&#x65;&#x6d;&#97;&#x69;&#108;&#x40;&#x33;&#120;&#46;&#112;&#110;&#103;</a>。如果没有图片恰好满足屏幕分辨率，则会自动选中最接近的一个图片。</p>
+<p><strong>网络图片</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&lt;Image source=&#123;&#123; <span class="hljs-attr">uri</span>: <span class="hljs-string">&#x27;https//assets.domain/xxx.jpg&#x27;</span>&#125;&#125;<br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002933776">ATS issue</a><br><img src="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138869293237.jpg" srcset="/img/loading.gif" lazyload></p>
+<h3 id="ListView"><a href="#ListView" class="headerlink" title="ListView"></a>ListView</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs javascripts">&lt;ListView<br>    dataSource=&#123;...&#125;<br>    renderRow=&#123;...&#125;<br>/&gt;<br></code></pre></td></tr></table></figure>
+
+<h3 id="Animation"><a href="#Animation" class="headerlink" title="Animation"></a>Animation</h3><p><a target="_blank" rel="noopener" href="http://www.alloyteam.com/2016/01/reactnative-animated/">参考</a></p>
+<h2 id="Network"><a href="#Network" class="headerlink" title="Network"></a>Network</h2><p>React Native 提供了和 web 标准一致的Fetch API</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs javascripts"><br>fetch(&#x27;https://mywebsite.com/endpoint/&#x27;, &#123;<br>  method: &#x27;POST&#x27;,<br>  headers: &#123;<br>    &#x27;Accept&#x27;: &#x27;application/json&#x27;,<br>    &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,<br>  &#125;,<br>  body: JSON.stringify(&#123;<br>    firstParam: &#x27;yourValue&#x27;,<br>    secondParam: &#x27;yourOtherValue&#x27;,<br>  &#125;)<br>&#125;)<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="AsyncStorage"><a href="#AsyncStorage" class="headerlink" title="AsyncStorage"></a>AsyncStorage</h2><p>是一个简单的、异步的、持久化的 <strong>key-value</strong> 存储系统，它对于App来说是全局性的。它用来代替 <strong>LocalStorage</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs javascripts">async saveUserName(account: String) &#123;<br>    let key = &#x27;@key-user-name&#x27;;<br>    try &#123;<br>        await AsyncStorage.setItem(key, account);<br>    &#125; catch (error) &#123;<br>        console.warn(error)<br>    &#125;<br>&#125;;<br><br>async getUserName() &#123;<br>    let key = &#x27;@key-user-name&#x27;;<br>    try &#123;<br>        return await AsyncStorage.getItem(key);<br>    &#125; catch (error) &#123;<br>        console.warn(error)<br>    &#125;<br>    return null;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="NativeBridge"><a href="#NativeBridge" class="headerlink" title="NativeBridge"></a>NativeBridge</h2><p><img src="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138857931917.jpg" srcset="/img/loading.gif" lazyload></p>
+<h2 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h2><h3 id="iOS"><a href="#iOS" class="headerlink" title="iOS"></a>iOS</h3><p>1.执行打包命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">react-native bundle --entry-file index.js --platform ios --dev false --bundle-output release_ios/main.jsbundle --assets-dest release_ios/<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138868113330.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>2.将 <strong>assets</strong> 与 <strong>main.jsbundle</strong> 添加到项目中<br><img src="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138870589984.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>3.修改 <strong>AppDelegate.m</strong>，让 React Native 去使用我们刚才导入的 <strong>jsbundle</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs objective-c">- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions<br>&#123;<br>    <br>  NSURL *jsCodeLocation;<br> //jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@&quot;index.ios&quot; fallbackResource:nil];<br> +jsCodeLocation = [[NSBundle mainBundle] URLForResource:@&quot;main&quot; withExtension:@&quot;jsbundle&quot;];<br>#endif<br>...<br>  return YES;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>4.在 <a target="_blank" rel="noopener" href="https://itunesconnect.apple.com/">iTunes Connect</a> 创建应用 ➜ 打包程序 ➜ 将应用提交到app store</p>
+<h3 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h3><p><a target="_blank" rel="noopener" href="https://developer.android.com/studio/publish/app-signing.html">参考</a></p>
+<ol>
+<li>生成证书</li>
+<li>配置gradle</li>
+</ol>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs groovy">android &#123;      <br>    signingConfigs &#123;  <br>        release &#123;  <br>            storeFile file_dir<br>            storePassword store_assword<br>            keyAlias alias<br>            keyPassword keyp_assword  <br>        &#125;  <br>    &#125;  <br>    buildTypes &#123;  <br>        release &#123;   <br>            signingConfig signingConfigs.release  <br>        &#125;  <br>    &#125;  <br>&#125;  <br></code></pre></td></tr></table></figure>
+
+<p>3.打包 APK</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./gradlew assembleRelease<br></code></pre></td></tr></table></figure>
+
+<h2 id="热更新"><a href="#热更新" class="headerlink" title="热更新"></a>热更新</h2><h3 id="codepush"><a href="#codepush" class="headerlink" title="codepush"></a>codepush</h3><p><a target="_blank" rel="noopener" href="https://microsoft.github.io/code-push/">https://microsoft.github.io/code-push/</a></p>
+<h3 id="自己实现"><a href="#自己实现" class="headerlink" title="自己实现"></a>自己实现</h3><p><a target="_blank" rel="noopener" href="http://www.lcode.org/react-native-hot-update/">参考1</a><br><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/2cb3eb9604ca">参考2</a></p>
+<p>以 Android 为例</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">react-native bundle <span class="hljs-params">--entry-file</span> index.js <span class="hljs-params">--platform</span> android <span class="hljs-params">--dev</span> <span class="hljs-literal">false</span> <span class="hljs-params">--bundle-output</span> release_android/main.jsbundle <span class="hljs-params">--assets-dest</span> release_android/<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>1.初始项目发布时，生成并保留一份 <strong>bundle</strong> 文件。</li>
+<li>2.有版本更新时，生成新的  <strong>bundle</strong> 文件，</li>
+<li>3.使用 <strong>google-diff-match-patch</strong> 对比两个文件，并生成差异补丁文件。</li>
+<li>4.App 下载补丁文件，再使用 <strong>google-diff-match-patch</strong> 和 assets 目录下的初始版本合并，生成新的 <strong>bundle</strong> 文件。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/oksep/ReactNativeTutorial/master/art/15138880360088.jpg" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/RN/" class="category-chain-item">RN</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/node-publish-npm-pkg/" title="Publishing cli-package to npm repository">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Publishing cli-package to npm repository</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/elasticsearch-delete-indices-period/" title="ElasticSearch 定期删除过期索引">
+                        <span class="hidden-mobile">ElasticSearch 定期删除过期索引</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://cdn.staticfile.org/waline/2.15.5/waline.min.css')
+      Fluid.utils.createScript('https://cdn.staticfile.org/waline/2.15.5/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://vercel-blog-comment-sandy.vercel.app","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/scripts/sakura_less.js"></script><!-- hexo injector body_end end --></body>
+</html>

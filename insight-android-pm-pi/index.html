@@ -1,0 +1,877 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/favicon-32x32.png">
+  <link rel="icon" href="/favicon/favicon-32x32.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#13323c">
+  <meta name="author" content="Sep">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="我们总是在安装、卸载apk，然而对于以下几个问题，你知道如何解答吗?  Package Manager 和 Package Installer 都是什么？ 在 Android 中 APK 文件存储在哪里？ 你知道 APK 安装的具体步骤吗？ Package Manager 是如何存储数据的？ 在哪里可以找到 Package Manager 和 PackageInstaller 的源码？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解 Android Package Manager 与 Package Installer">
+<meta property="og:url" content="https://blog.septenary.cn/insight-android-pm-pi/index.html">
+<meta property="og:site_name" content="Sep&#39;s blog">
+<meta property="og:description" content="我们总是在安装、卸载apk，然而对于以下几个问题，你知道如何解答吗?  Package Manager 和 Package Installer 都是什么？ 在 Android 中 APK 文件存储在哪里？ 你知道 APK 安装的具体步骤吗？ Package Manager 是如何存储数据的？ 在哪里可以找到 Package Manager 和 PackageInstaller 的源码？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.septenary.cn/imgs/post-151221-1.png">
+<meta property="article:published_time" content="2015-12-20T15:14:34.000Z">
+<meta property="article:modified_time" content="2024-03-17T07:47:39.047Z">
+<meta property="article:author" content="Sep">
+<meta property="article:tag" content="Package Manager">
+<meta property="article:tag" content="Package Installer">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.septenary.cn/imgs/post-151221-1.png">
+  
+  
+  
+  <title>深入理解 Android Package Manager 与 Package Installer ✍️ Sep&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.septenary.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":10,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#00bfa6","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"shell"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"ba4b70fc46a41b92c211dabf83df845c","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"KY2xelIyRT9MVrxAcB4hScJS-MdYXbMMI","app_key":"Tys2qvQf5WYXnV1GiOWsOBis","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ba4b70fc46a41b92c211dabf83df845c";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><script src="/scripts/hexo_resize_image.js"></script><!-- hexo injector body_begin end -->
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>📚 Sep&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn/assets/resume_en_2024.pdf" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Sep</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="深入理解 Android Package Manager 与 Package Installer"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2015-12-20 15:14" pubdate>
+          2015年12月20日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深入理解 Android Package Manager 与 Package Installer</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>我们总是在安装、卸载apk，然而对于以下几个问题，你知道如何解答吗?</p>
+<ol>
+<li>Package Manager 和 Package Installer 都是什么？</li>
+<li>在 Android 中 APK 文件存储在哪里？</li>
+<li>你知道 APK 安装的具体步骤吗？</li>
+<li>Package Manager 是如何存储数据的？</li>
+<li>在哪里可以找到 Package Manager 和 PackageInstaller 的源码？</li>
+</ol>
+<span id="more"></span>
+
+
+<h2 id="什么是-Package-Manager、Package-Installer"><a href="#什么是-Package-Manager、Package-Installer" class="headerlink" title="什么是 Package Manager、Package Installer?"></a>什么是 Package Manager、Package Installer?</h2><p><code>PackageInstaller</code> 是安装普通应用的默认系统应用，它提供了一个接口来管理应用包，并调用 <code>InstallAppProgress</code> Activity 来接收用户指令，<code>InstallAppProgress</code> 会访问  <strong>Package Manager Service</strong> 查看包安装信息，可以在 <code>&lt;Android Source&gt;/packages/apps/PackageInstaller</code> 找到源码</p>
+<p>Package Manager 实际上是管理应用安装、卸载的一个 API，当我们安装 APK 文件时，Package Manager 会解析 APK 文件来显示一些应用信息。当按下 OK 键时，Package Manager 调用方法 <code>installPackage（）</code>  并传递四个参数 : </p>
+<ul>
+<li>uri</li>
+<li>installFlags</li>
+<li>observer</li>
+<li>installPackageName</li>
+</ul>
+<p>此时，Package Manager 会开启一个名为 <strong>package</strong> 的服务，其它任务都由这个服务来完成。在  PackageInstaller 的源码中，可以查看 <strong>PackageInstallerActivity.java</strong> 和 <strong>InstallAppProgress.java</strong> 这两个类，系统在启动时，会将 Package Manager Service 运行在系统进程中，而安装行为则由原生进程（native process）执行。</p>
+<hr>
+<h2 id="Where-are-APK-Files-Stored-in-Android"><a href="#Where-are-APK-Files-Stored-in-Android" class="headerlink" title="Where are APK Files Stored in Android?"></a>Where are APK Files Stored in Android?</h2><ul>
+<li>a. 预装应用 （相机、日历、浏览器等）APK 存储在 <code>/system/app/</code></li>
+<li>b. 用户应用（微博、微信等）APK 存储在 <code>/data/app/</code></li>
+<li>c. Package Manager 会为每个应用创建一个目录 <code>/data/data/&lt;package-name&gt;/</code> 来存储数据库数据，shared preference 数据，本地库（native lib）和 缓存数据。</li>
+</ul>
+<p>You might see an apk file and *.odex file for the same APK. The ODEX file is totally a different discussion and purpose.</p>
+<hr>
+<h2 id="APK-安装内幕"><a href="#APK-安装内幕" class="headerlink" title="APK 安装内幕"></a>APK 安装内幕</h2><p>以下介绍了 Package Manager Service 具体执行步骤</p>
+<ul>
+<li>等待</li>
+<li>将一个 package 添加到安装队列</li>
+<li>确定应用安装的合适位置</li>
+<li>确定是安装还是更新</li>
+<li>将 apk 拷贝到指定路径下</li>
+<li>给 app 分配 UID</li>
+<li>请求安装进程</li>
+<li>创建应用程序的目录，设置权限</li>
+<li>解压dex文件到缓存路径</li>
+<li>列出包的具体信息并映射到 <code>/system/data/packages.xml</code> 中，// To reflect and packages.list / system / data / packages.xml the latest status </li>
+<li>广播安装进度 <code>Intent.ACTION_PACKAGE_ADDED</code> 或 <code>Intent.ACTION_PACKAGE_REPLACED</code></li>
+</ul>
+<p><img src="/imgs/post-151221-1.png" srcset="/img/loading.gif" lazyload alt="安装步骤"></p>
+<hr>
+<h2 id="Package-Manager-如何存储数据"><a href="#Package-Manager-如何存储数据" class="headerlink" title="Package Manager 如何存储数据?"></a>Package Manager 如何存储数据?</h2><p>Package Manager 将应用信息存储在 <code>/data/system</code> 文件夹下的三个文件中，以 Android 4.0 Ice Cream Sandwich 模拟器镜像为例：</p>
+<h3 id="1-packages-xml"><a href="#1-packages-xml" class="headerlink" title="1. packages.xml"></a>1. packages.xml</h3><p>该文件列出了所有包的权限</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">packages</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">last-platform-version</span> <span class="hljs-attr">external</span>=<span class="hljs-string">&quot;15&quot;</span> <span class="hljs-attr">internal</span>=<span class="hljs-string">&quot;15&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">permission-trees</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">permissions</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">item</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;android.permission.CHANGE_WIFI_MULTICAST_STATE&quot;</span> <span class="hljs-attr">package</span>=<span class="hljs-string">&quot;android&quot;</span> <span class="hljs-attr">protection</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">item</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;android.permission.CLEAR_APP_USER_DATA&quot;</span> <span class="hljs-attr">package</span>=<span class="hljs-string">&quot;android&quot;</span> <span class="hljs-attr">protection</span>=<span class="hljs-string">&quot;2&quot;</span>&gt;</span><br>...<br><span class="hljs-tag">&lt;/<span class="hljs-name">item</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">item</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">permissions</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">package</span> <span class="hljs-attr">codepath</span>=<span class="hljs-string">&quot;/system/app/Contacts.apk&quot;</span> <span class="hljs-attr">flags</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">ft</span>=<span class="hljs-string">&quot;136567b3990&quot;</span> <span class="hljs-attr">it</span>=<span class="hljs-string">&quot;136567b3990&quot;</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;com.android.contacts&quot;</span> <span class="hljs-attr">nativelibrarypath</span>=<span class="hljs-string">&quot;/data/data/com.android.contacts/lib&quot;</span> <span class="hljs-attr">shareduserid</span>=<span class="hljs-string">&quot;10001&quot;</span> <span class="hljs-attr">ut</span>=<span class="hljs-string">&quot;136567b3990&quot;</span> <span class="hljs-attr">version</span>=<span class="hljs-string">&quot;15&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">sigs</span> <span class="hljs-attr">count</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">cert</span> <span class="hljs-attr">index</span>=<span class="hljs-string">&quot;2&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">cert</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">sigs</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">package</span>&gt;</span><br><br>... <br><br><span class="hljs-tag">&lt;<span class="hljs-name">package</span> <span class="hljs-attr">codepath</span>=<span class="hljs-string">&quot;/data/app/com.project.t2i-2.apk&quot;</span> <span class="hljs-attr">flags</span>=<span class="hljs-string">&quot;0&quot;</span> <span class="hljs-attr">ft</span>=<span class="hljs-string">&quot;13a837c2068&quot;</span> <span class="hljs-attr">it</span>=<span class="hljs-string">&quot;13a83704ea3&quot;</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;com.project.t2i&quot;</span> <span class="hljs-attr">nativelibrarypath</span>=<span class="hljs-string">&quot;/data/data/com.project.t2i/lib&quot;</span> <span class="hljs-attr">userid</span>=<span class="hljs-string">&quot;10040&quot;</span> <span class="hljs-attr">ut</span>=<span class="hljs-string">&quot;13a837c2ecb&quot;</span> <span class="hljs-attr">version</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">sigs</span> <span class="hljs-attr">count</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">cert</span> <span class="hljs-attr">index</span>=<span class="hljs-string">&quot;3&quot;</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&quot;308201e530820...c5c7a&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">cert</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">sigs</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">perms</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">item</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">item</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">perms</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">package</span>&gt;</span><br><br>...<br><br><span class="hljs-tag">&lt;/<span class="hljs-name">permission-trees</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">last-platform-version</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">packages</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>这个 XML 文件存储了两类数据:</p>
+<h4 id="a-permission"><a href="#a-permission" class="headerlink" title="a.permission"></a>a.permission</h4><p>permission 存储在 <code>&lt;permissions&gt;</code> 标签下，每个 <strong>permission</strong> 有三个属性：</p>
+<ul>
+<li><strong>name</strong>  我们在 AndroidManifest.xml 中用到的权限名</li>
+<li><strong>package</strong>  指明权限所属，大部分情况下都是默认值 <strong>android</strong></li>
+<li><strong>protection</strong>  指定权限安全等级</li>
+</ul>
+<h4 id="b-packages-application"><a href="#b-packages-application" class="headerlink" title="b.packages(application)"></a>b.packages(application)</h4><p>packages 标签下有10个属性和一些子属性</p>
+<table>
+<thead>
+<tr>
+<th align="left">序</th>
+<th align="left">属性名</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">name</td>
+<td align="left">package name</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">codePath</td>
+<td align="left">APK 文件的安装位置 (<code>/system/app/</code> 或 <code>/data/app/</code>)</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">nativeLibraryPath</td>
+<td align="left">本地库 (*.so 文件)路径， 默认路径是 <code>/data/data/&lt;package name&gt;/lib/</code></td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">flag</td>
+<td align="left">ApplicationInfo Flags <a target="_blank" rel="noopener" href="http://developer.android.com/reference/android/content/pm/ApplicationInfo.html">参考更多</a></td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">ft</td>
+<td align="left">hex 格式的时间戳</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">lt</td>
+<td align="left">首次安装时间戳，hex 格式</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">ut</td>
+<td align="left">最后更新时间戳，hex 格式</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">version</td>
+<td align="left">AndroidManifest.xml文件中的 Version Code <a target="_blank" rel="noopener" href="http://developer.android.com/guide/topics/manifest/manifest-element.html#vcode">参考更多</a></td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">sharedUserId</td>
+<td align="left">它会与其他有相同 sharedUserID 的程序共享数据，这个 id 与我们在 AndroidManifest 中定义 sharedUserID 的相同 <a target="_blank" rel="noopener" href="http://developer.android.com/guide/topics/manifest/manifest-element.html#uid">参考更多</a></td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="left">userId</td>
+<td align="left">Linux用户ID</td>
+</tr>
+</tbody></table>
+<p><strong>子属性</strong></p>
+<ul>
+<li> <strong>sigs</strong>  签名信息, count 属性代表证书标签数量</li>
+<li> <strong>cert</strong>  全球认证证书</li>
+<li> <strong>perms</strong>  发行许可</li>
+</ul>
+<h3 id="2-packages-list"><a href="#2-packages-list" class="headerlink" title="2. packages.list"></a>2. packages.list</h3><p>简单的文本文件，列出了 <strong>package name</strong>、<strong>user id</strong>、<strong>flag</strong> 和 <strong>data</strong> 路径（我并没有找到比较完美的描述，但我猜想 <strong>packages.list</strong> 只保留一些重要的信息，是为了用来快速检索）</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs xml">com.android.launcher 10013 0 /data/data/com.android.launcher<br>com.android.quicksearchbox 10033 0 /data/data/com.android.quicksearchbox<br>com.android.contacts 10001 0 /data/data/com.android.contacts<br>com.android.inputmethod.latin 10006 0 /data/data/com.android.inputmethod.latin<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-packages-stoped-xml"><a href="#3-packages-stoped-xml" class="headerlink" title="3. packages-stoped.xml"></a>3. packages-stoped.xml</h3><p>这个文件列出了哪些 package 是 stopped 状态，stopped 状态的应用程序不会接收到任何广播  <a target="_blank" rel="noopener" href="http://droidyue.com/blog/2014/01/04/package-stop-state-since-android-3-dot-1/">参考更多</a></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">stopped-packages</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">pkg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;com.android.widgetpreview&quot;</span> <span class="hljs-attr">nl</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">pkg</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">pkg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;com.example.android.livecubes&quot;</span> <span class="hljs-attr">nl</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">pkg</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">pkg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;com.android.gesture.builder&quot;</span> <span class="hljs-attr">nl</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">pkg</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">pkg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;com.example.android.softkeyboard&quot;</span> <span class="hljs-attr">nl</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">pkg</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">stopped-packages</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Where-I-Can-Find-the-Source-Code-of-Package-Manager-and-Package-Installer"><a href="#Where-I-Can-Find-the-Source-Code-of-Package-Manager-and-Package-Installer" class="headerlink" title="Where I Can Find the Source Code of Package Manager and Package Installer?"></a>Where I Can Find the Source Code of Package Manager and Package Installer?</h2><p><strong>Package Manager</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/services/java/com/android/server/pm/Settings.java">frameworks/base/services/java/com/android/server/pm/Settings.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/services/java/com/android/server/pm/PackageManagerService.java">frameworks/base/services/java/com/android/server/pm/PackageManagerService.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/core/java/android/content/pm/IPackageManager.aidl">frameworks/base/services/java/com/android/server/pm/IPackageManager.aidl</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/services/java/com/android/server/pm/PackageSignatures.java">frameworks/base/services/java/com/android/server/pm/PackageSignatures.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/services/java/com/android/server/pm/PreferredActivity.java">frameworks/base/services/java/com/android/server/pm/PreferredActivity.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/services/java/com/android/server/PreferredComponent.java">frameworks/services/java/com/android/server/PreferredComponent.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/core/java/android/content/IntentFilter.java">frameworks/core/java/android/content/IntentFilter.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/core/java/android/content/pm/PackageParser.java">frameworks/base/core/java/android/content/pm/PackageParser.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/services/java/com/android/server/pm/Installer.java">frameworks/base/services/java/com/android/server/pm/Installer.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/core/java/com/android/internal/app/IMediaContainerService.aidl">frameworks/base/core/java/com/android/internal/app/IMediaContainerService.aidl</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/frameworks/base/+/483f3b06ea84440a082e21b68ec2c2e54046f5a6/packages/DefaultContainerService/src/com/android/defcontainer/DefaultContainerService.java">frameworks/base/packages/DefaultContainerService/src/com/android/defcontainer/DefaultContainerService.java</a></li>
+</ul>
+<p><strong>Package Installer</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/packages/apps/PackageInstaller/+/47fe118e0178e9d72c98073ff588ee5cf353258e/src/com/android/packageinstaller/PackageInstallerActivity.java">packages/apps/PackageInstaller/src/com/android/packageinstaller/PackageInstallerActivity.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/packages/apps/PackageInstaller/+/47fe118e0178e9d72c98073ff588ee5cf353258e/src/com/android/packageinstaller/PackageUtil.java">packages/apps/PackageInstaller/src/com/android/packageinstaller/PackageUtil.java</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/packages/apps/PackageInstaller/+/47fe118e0178e9d72c98073ff588ee5cf353258e/src/com/android/packageinstaller/InstallAppProgress.java">packages/apps/PackageInstaller/src/com/android/packageinstaller/InstallAppProgress.java</a></li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://dzone.com/articles/depth-android-package-manager">原文链接</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AE%83%E5%B1%B1%E4%B9%8B%E7%9F%B3/" class="category-chain-item">它山之石</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Package-Manager/" class="print-no-link">#Package Manager</a>
+      
+        <a href="/tags/Package-Installer/" class="print-no-link">#Package Installer</a>
+      
+    </div>
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/android-queue-message/" title="Android 异步处理队列消息分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Android 异步处理队列消息分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/android-apt-auto-gen-code/" title="AndroidStudio 编译时自动生成源代码">
+                        <span class="hidden-mobile">AndroidStudio 编译时自动生成源代码</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://cdn.staticfile.org/waline/2.15.5/waline.min.css')
+      Fluid.utils.createScript('https://cdn.staticfile.org/waline/2.15.5/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://vercel-blog-comment-sandy.vercel.app","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/scripts/sakura_less.js"></script><!-- hexo injector body_end end --></body>
+</html>
