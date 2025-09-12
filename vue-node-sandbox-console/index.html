@@ -1,0 +1,749 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/favicon-32x32.png">
+  <link rel="icon" href="/favicon/favicon-32x32.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#13323c">
+  <meta name="author" content="Sep">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="团队内部开发了很多 Web 平台的工具，由于服务端逻辑比较复杂，生产环境上运行的服务涉及到的一些问题，排查起来相对困难，需要进入到当前服务内部查看运行情况 本文提供一种后门服务：在 NodeJS 服务中包装 Node::VM 沙盒模式，支持远程运行在前端编辑器上编写的代码 源代码参考">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue+Node::VM 沙盒控制台工具">
+<meta property="og:url" content="https://blog.septenary.cn/vue-node-sandbox-console/index.html">
+<meta property="og:site_name" content="Sep&#39;s blog">
+<meta property="og:description" content="团队内部开发了很多 Web 平台的工具，由于服务端逻辑比较复杂，生产环境上运行的服务涉及到的一些问题，排查起来相对困难，需要进入到当前服务内部查看运行情况 本文提供一种后门服务：在 NodeJS 服务中包装 Node::VM 沙盒模式，支持远程运行在前端编辑器上编写的代码 源代码参考">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.septenary.cn/assets/vue_node_sandbox_console_00.svg">
+<meta property="og:image" content="https://blog.septenary.cn/assets/vue_node_sandbox_console_01.jpg">
+<meta property="article:published_time" content="2023-01-19T23:27:24.000Z">
+<meta property="article:modified_time" content="2025-09-12T08:20:01.935Z">
+<meta property="article:author" content="Sep">
+<meta property="article:tag" content="sandbox">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="node">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.septenary.cn/assets/vue_node_sandbox_console_00.svg">
+  
+  
+  
+  <title>Vue+Node::VM 沙盒控制台工具 ✍️ Sep&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.septenary.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":10,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#00bfa6","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"shell"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"ba4b70fc46a41b92c211dabf83df845c","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"KY2xelIyRT9MVrxAcB4hScJS-MdYXbMMI","app_key":"Tys2qvQf5WYXnV1GiOWsOBis","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ba4b70fc46a41b92c211dabf83df845c";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><script src="/scripts/hexo_resize_image.js"></script><!-- hexo injector body_begin end -->
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>📚 Sep&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn/assets/resume_en_2024.pdf" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://septenary.cn" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>Sep</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/assets/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Vue+Node::VM 沙盒控制台工具"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-19 23:27" pubdate>
+          2023年1月19日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          776 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Vue+Node::VM 沙盒控制台工具</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>团队内部开发了很多 Web 平台的工具，由于服务端逻辑比较复杂，生产环境上运行的服务涉及到的一些问题，排查起来相对困难，需要进入到当前服务内部查看运行情况</p>
+<p>本文提供一种后门服务：在 NodeJS 服务中包装 Node::VM 沙盒模式，支持远程运行在前端编辑器上编写的代码</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/oksep/vue-node-sandbox-console">源代码参考</a></p>
+<span id="more"></span>
+
+<h1 id="沙盒流程"><a href="#沙盒流程" class="headerlink" title="沙盒流程"></a>沙盒流程</h1><p><img src="/assets/vue_node_sandbox_console_00.svg" srcset="/img/loading.gif" lazyload alt="figure_0"></p>
+<p>首先前端用 vue 支持了一个代码编辑器，通过 axios api 请求将代码发送到 node server 端，在 vm 执行，然后返回执行结果给前端</p>
+<h2 id="Vue-前端代码"><a href="#Vue-前端代码" class="headerlink" title="Vue 前端代码"></a>Vue 前端代码</h2><p>前端代码比较简单，是基于 vue 技术栈对 CodeEditor 做二次封装 <a target="_blank" rel="noopener" href="https://github.com/oksep/vue-node-sandbox-console/blob/master/client/src/views/sandbox.vue">source</a></p>
+<h2 id="Node-后端代码"><a href="#Node-后端代码" class="headerlink" title="Node 后端代码"></a>Node 后端代码</h2><p>后端主要对 node:vm 的封装 <a target="_blank" rel="noopener" href="https://github.com/oksep/vue-node-sandbox-console/blob/master/server/src/utils/sandbox.ts">source</a></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">const</span> globalConsole = <span class="hljs-built_in">global</span>.console<br><br><span class="hljs-comment">// 沙盒运行结果封装</span><br><span class="hljs-keyword">const</span> sandboxConsole = <span class="hljs-function">(<span class="hljs-params">level: <span class="hljs-built_in">string</span>, msg: <span class="hljs-built_in">any</span>, ...args: <span class="hljs-built_in">any</span>[]</span>) =&gt;</span> &#123;<br>    <span class="hljs-built_in">console</span>.result += <span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().toLocaleString()&#125;</span> <span class="hljs-subst">$&#123;level&#125;</span>:\n<span class="hljs-subst">$&#123;msg&#125;</span>`</span><br>    args.forEach(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> item !== <span class="hljs-string">&#x27;object&#x27;</span>) &#123;<br>            <span class="hljs-built_in">console</span>.result += <span class="hljs-string">` <span class="hljs-subst">$&#123;item&#125;</span>`</span><br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-built_in">console</span>.result += <span class="hljs-string">` <span class="hljs-subst">$&#123;<span class="hljs-built_in">JSON</span>.stringify(item)&#125;</span>`</span><br>        &#125;<br>    &#125;)<br>    <span class="hljs-built_in">console</span>.result += <span class="hljs-string">&#x27;\n\n&#x27;</span><br>&#125;<br><br><span class="hljs-comment">// 沙盒日志</span><br><span class="hljs-keyword">const</span> <span class="hljs-built_in">console</span>: &#123; <span class="hljs-attr">result</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">log</span>: <span class="hljs-built_in">Function</span>, <span class="hljs-attr">warn</span>: <span class="hljs-built_in">Function</span>, <span class="hljs-attr">error</span>: <span class="hljs-built_in">Function</span> &#125; = &#123;<br>    <span class="hljs-attr">result</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>    <span class="hljs-attr">log</span>: <span class="hljs-function">(<span class="hljs-params">msg: <span class="hljs-built_in">any</span>, ...args: <span class="hljs-built_in">any</span>[]</span>) =&gt;</span> &#123;<br>        globalConsole.log(<span class="hljs-string">&#x27;Sandbox console&#x27;</span>, msg, ...args)<br>        sandboxConsole(<span class="hljs-string">&#x27;debug&#x27;</span>, msg, ...args)<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// vm 主要封装</span><br><span class="hljs-comment">// sandbox:any 是提供给前端允许调用的模块</span><br><span class="hljs-comment">// code 需要执行的代码</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">executeCodeInSandbox</span>(<span class="hljs-params">sandbox: <span class="hljs-built_in">any</span>, code?: <span class="hljs-built_in">string</span></span>) </span>&#123;<br>    <span class="hljs-keyword">if</span> (!code || code.trim().length === <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">&#x27;Nothing executed.&#x27;</span>)<br>    &#125;<br><br>    <span class="hljs-comment">// 结构化代码</span><br>    <span class="hljs-keyword">const</span> slices = code.trim().split(<span class="hljs-regexp">/\r?\n/</span>)<br>        .map(<span class="hljs-function">(<span class="hljs-params">l: <span class="hljs-built_in">string</span>, i: <span class="hljs-built_in">number</span></span>) =&gt;</span> &#123;<br>            <span class="hljs-keyword">return</span> l.trimEnd()<br>        &#125;)<br>        .filter(<span class="hljs-function">(<span class="hljs-params">l: <span class="hljs-built_in">string</span>, i: <span class="hljs-built_in">number</span></span>) =&gt;</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-regexp">/^[A-Za-z0-9&#123;&#125;(&amp;|]/</span>.test(l.trimStart())<br>        &#125;)<br>    <span class="hljs-keyword">if</span> (slices.length == <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">&#x27;Nothing executed.&#x27;</span>)<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (slices.length == <span class="hljs-number">1</span>) &#123;<br>        code = slices[<span class="hljs-number">0</span>]<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        code = slices.reduce(<span class="hljs-function">(<span class="hljs-params">p: <span class="hljs-built_in">string</span>, c: <span class="hljs-built_in">string</span>, i: <span class="hljs-built_in">number</span>, a: <span class="hljs-built_in">string</span>[]</span>) =&gt;</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">`<span class="hljs-subst">$&#123;p&#125;</span>\n    <span class="hljs-subst">$&#123;c&#125;</span>`</span><br>        &#125;)<br>    &#125;<br><br>    <span class="hljs-comment">// 对要调用的代码做一层安全包装，同时在执行前打开 DB，以便支持数据库查询操作</span><br>    <span class="hljs-keyword">let</span> wrapCode = <span class="hljs-string">`globalConsole.log(&#x27;VM exec in process:&#x27;, process.pid, process.title)</span><br><span class="hljs-string">try &#123;</span><br><span class="hljs-string">    console.result = &#x27;&#x27;</span><br><span class="hljs-string">    await connectDBAsync()</span><br><span class="hljs-string">    <span class="hljs-subst">$&#123;code&#125;</span></span><br><span class="hljs-string">    await disconnectDBAsync()</span><br><span class="hljs-string">    inject(console.result)</span><br><span class="hljs-string">&#125; catch (e) &#123;</span><br><span class="hljs-string">    inject(e)</span><br><span class="hljs-string">&#125;`</span><br><br>    <span class="hljs-built_in">console</span>.log(wrapCode);<br><br>    <span class="hljs-comment">// 在 node:vm 中执行 code</span><br>    <span class="hljs-keyword">await</span> (<span class="hljs-keyword">async</span> (code: <span class="hljs-built_in">string</span>) =&gt; &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>) =&gt;</span> &#123;<br>            <span class="hljs-keyword">const</span> script: Script = <span class="hljs-keyword">new</span> vm.Script(<span class="hljs-string">`(async()=&gt;&#123;<span class="hljs-subst">$&#123;code&#125;</span>&#125;)()`</span>)<br>            <span class="hljs-keyword">const</span> options: RunningScriptOptions = &#123;<br>                <span class="hljs-attr">timeout</span>: <span class="hljs-number">1000</span>,<br>                <span class="hljs-attr">displayErrors</span>: <span class="hljs-literal">true</span>,<br>            &#125;<br>            <span class="hljs-keyword">const</span> context: Context = vm.createContext(&#123;<br>                ...sandbox,<br>                <span class="hljs-built_in">console</span>,<br>                globalConsole,<br>                process,<br>                connectDBAsync,<br>                disconnectDBAsync,<br>                <span class="hljs-attr">inject</span>: <span class="hljs-function">(<span class="hljs-params">result: <span class="hljs-built_in">any</span></span>) =&gt;</span> &#123;<br>                    sandbox.result = result<br>                    resolve(result)<br>                &#125;<br>            &#125;)<br>            script.runInContext(context, options)<br>        &#125;)<br>    &#125;)(wrapCode)<br><br>    <span class="hljs-comment">// 返回代码执行结果</span><br>    <span class="hljs-keyword">return</span> sandbox.result <span class="hljs-comment">// util.inspect(sandbox.result)</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Koa 路由接收 http 请求</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">import</span> Router <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;koa-router&#x27;</span><br><span class="hljs-keyword">import</span> Koa <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;koa&quot;</span><br><span class="hljs-keyword">import</span> executeCodeInSandbox <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../utils/sandbox&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; getUserByEmail &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../db/userDao&#x27;</span>;<br><br><br><span class="hljs-comment">// modules which register in sandboxEnv, the code can reference only !!!</span><br><span class="hljs-keyword">const</span> sandboxEnv: <span class="hljs-built_in">any</span> = &#123;<br>    <span class="hljs-built_in">require</span>,<br>    getUserByEmail<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> sandboxRouter: Router = <span class="hljs-keyword">new</span> Router()<br><br>sandboxRouter.post(<span class="hljs-string">&#x27;execute-code&#x27;</span>, <span class="hljs-string">&#x27;/execute-code&#x27;</span>, <span class="hljs-keyword">async</span> (ctx: Koa.Context) =&gt; &#123;<br>    <span class="hljs-keyword">const</span> &#123; codeData &#125; = ctx.request.body <span class="hljs-keyword">as</span> &#123; codeData?: <span class="hljs-built_in">string</span> &#125;<br>    <span class="hljs-keyword">let</span> result: <span class="hljs-built_in">any</span><br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;sandbox exec start...\n&#x27;</span>, codeData)<br>    <span class="hljs-keyword">try</span> &#123;<br>        result = <span class="hljs-keyword">await</span> executeCodeInSandbox(&#123; ...sandboxEnv &#125;, codeData)<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> result !== <span class="hljs-string">&#x27;object&#x27;</span>) &#123;<br>            result = <span class="hljs-string">`<span class="hljs-subst">$&#123;result&#125;</span>`</span><br>        &#125;<br>    &#125; <span class="hljs-keyword">catch</span> (e: <span class="hljs-built_in">any</span>) &#123;<br>        result = e.stack ? e.stack : <span class="hljs-string">`<span class="hljs-subst">$&#123;e&#125;</span>`</span><br>        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">&#x27;sandbox exec error&#x27;</span>, result)<br>    &#125;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;sandbox exec end...\n&#x27;</span>, result)<br>    ctx.body = &#123;<br>        <span class="hljs-attr">result</span>: result<br>    &#125;<br>&#125;)<br><br></code></pre></td></tr></table></figure>
+
+<p>这里需要注意, server 端可以将 sandboxEnv(utils/daos 等模块) 注册到了沙盒 vm context 中，只有注册到沙盒中的模块，前端代码才能够调用的到！</p>
+<p>在前端代码编辑器中编写代码查看运行效果:</p>
+<p><img src="/assets/vue_node_sandbox_console_01.jpg" srcset="/img/loading.gif" lazyload alt="figure_1"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/nodejs/" class="category-chain-item">nodejs</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/sandbox/" class="print-no-link">#sandbox</a>
+      
+        <a href="/tags/vue/" class="print-no-link">#vue</a>
+      
+        <a href="/tags/node/" class="print-no-link">#node</a>
+      
+    </div>
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/helo-notion-api/" title="helo_notion_api">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">helo_notion_api</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/android-mvvm-with-clean/" title="让 Clean 拯救大型项目">
+                        <span class="hidden-mobile">让 Clean 拯救大型项目</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://cdn.staticfile.org/waline/2.15.5/waline.min.css')
+      Fluid.utils.createScript('https://cdn.staticfile.org/waline/2.15.5/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://vercel-blog-comment-sandy.vercel.app","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/scripts/sakura_less.js"></script><!-- hexo injector body_end end --></body>
+</html>
